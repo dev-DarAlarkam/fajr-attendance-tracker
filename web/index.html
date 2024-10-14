@@ -19,18 +19,42 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project.">
-
+  <meta name="google-signin-client_id" content="178213360147-pvj1ccip8r76gb0e7kiglkf00141ovsf.apps.googleusercontent.com" />
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="attendance_tracker">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <!-- Favicon (from lib/assets/images) -->
+  <link rel="icon" type="image/png" href="../lib/assets/images/logo.png"/>
 
   <title>attendance_tracker</title>
   <link rel="manifest" href="manifest.json">
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+    import { } from 'firebase/auth';
+  
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyBD-qRWmAYpVEG3lN75mCSTPewOofCjLf0",
+      authDomain: "dar-alarkam-fajr-tracker.firebaseapp.com",
+      projectId: "dar-alarkam-fajr-tracker",
+      storageBucket: "dar-alarkam-fajr-tracker.appspot.com",
+      messagingSenderId: "178213360147",
+      appId: "1:178213360147:web:c32e33ef4aee73a88ba5e6",
+      measurementId: "G-D4K3Q9LQG0"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
