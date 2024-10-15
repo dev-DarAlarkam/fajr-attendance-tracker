@@ -1,6 +1,9 @@
 import 'package:attendance_tracker/app_constants.dart';
+import 'package:attendance_tracker/providers/auth_provider.dart';
+import 'package:attendance_tracker/screens/splash_screen.dart';
 import 'package:attendance_tracker/utils/dictionary.dart';
-import 'package:attendance_tracker/widgets/buttons/reset_password_buttons.dart';
+import 'package:attendance_tracker/widgets/buttons/firebase_auth_button.dart';
+import 'package:attendance_tracker/widgets/show_snack_bar.dart';
 import 'package:attendance_tracker/widgets/textFields/emailTextField.dart';
 import 'package:flutter/material.dart';
 
@@ -51,12 +54,25 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   // Email Field
                   EmailTextField(controller: _emailController),
                   SizedBox(height: 20),
-      
+
+                  FirebaseAuthButton(onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      // If the form is valid, reset password
+                      try{
+                        await AuthProvider().resetPassword(_emailController.text);
+                        showSnackBar(context, Dictionary.resetPasswordSuccess);
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>SplashScreen()));
+                      }
+                      catch (e) {
+                        showSnackBar(context, '$e');
+                      }
+                    } else {
+                      // The error state will be triggered by the validator returning an error message
+                    }
+                    }, 
+                    text: Dictionary.resetPassword
+                  ),
                   // Reset Password Button
-                  ResetPasswordActionButton(
-                    _formKey, 
-                    _emailController.text,
-                    )
                 ],
               ),
             ),

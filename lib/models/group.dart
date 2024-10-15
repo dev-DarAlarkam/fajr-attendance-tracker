@@ -1,14 +1,15 @@
+import 'package:crypto/crypto.dart';
+import 'dart:convert' show utf8;
+
 class Group {
-  final String groupId;              // Firestore-generated group ID
+  final String groupId;              
   final String groupName;
-  final String description;
   final String gradeLevel;           // Grade level associated with the group
   final List<String> members;        // List of user IDs
 
   Group({
     required this.groupId,
     required this.groupName,
-    required this.description,
     required this.gradeLevel,
     required this.members,
   });
@@ -17,7 +18,6 @@ class Group {
     return Group(
       groupId: data['groupId'] ?? '',
       groupName: data['groupName'] ?? '',
-      description: data['description'] ?? '',
       gradeLevel: data['gradeLevel'] ?? 'None',
       members: List<String>.from(data['members'] ?? []),
     );
@@ -27,9 +27,16 @@ class Group {
     return {
       'groupId': groupId,
       'groupName': groupName,
-      'description': description,
       'gradeLevel': gradeLevel,
       'members': members,
     };
+  }
+
+  static String generateGroupId() {
+    String start = DateTime.now().microsecondsSinceEpoch.toString();
+    final bytes = utf8.encode(start); // Encode input as bytes
+    final hash = sha256.convert(bytes); // Create SHA-256 hash
+    String id = hash.toString().substring(0, 5).toUpperCase(); // Truncate and uppercase
+    return 'group_$id';
   }
 }

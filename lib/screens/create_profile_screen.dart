@@ -1,17 +1,22 @@
 import 'package:attendance_tracker/app_constants.dart';
+import 'package:attendance_tracker/models/user_profile.dart';
+import 'package:attendance_tracker/providers/auth_provider.dart';
+import 'package:attendance_tracker/providers/user_profile_provider.dart';
 import 'package:attendance_tracker/utils/date_format_utils.dart';
 import 'package:attendance_tracker/utils/dictionary.dart';
+import 'package:attendance_tracker/widgets/buttons/firebase_action_button.dart';
+import 'package:attendance_tracker/widgets/show_snack_bar.dart';
 import 'package:attendance_tracker/widgets/textFields/form_text_field.dart';
 import 'package:flutter/material.dart';
 
-class NewUserScreen extends StatefulWidget {
-  const NewUserScreen({super.key});
+class CreateProfileScreen extends StatefulWidget {
+  const CreateProfileScreen({super.key});
 
   @override
-  State<NewUserScreen> createState() => _NewUserScreenState();
+  State<CreateProfileScreen> createState() => _CreateProfileScreenState();
 }
 
-class _NewUserScreenState extends State<NewUserScreen> {
+class _CreateProfileScreenState extends State<CreateProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _fatherNameController = TextEditingController();
@@ -24,6 +29,8 @@ class _NewUserScreenState extends State<NewUserScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UserProfile userProfile;
+
     return Form(
       key: _formKey,
       child: Scaffold(
@@ -57,10 +64,38 @@ class _NewUserScreenState extends State<NewUserScreen> {
                   SizedBox(height: 20),
                   // Grade Dropdown
                   _buildGradeDropdown(),
-                  if (_showOtherGrade) NameTextField(_otherGradeController, 'أدخل الصف', marginTop: 5),
+                  if (_showOtherGrade) NameTextField(_otherGradeController, 'آخر', marginTop: 5),
                   SizedBox(height: 20),
-                  // TODO: Create Profile Button
-                  // SignupActionButton(_formKey)
+                  
+                  FirebaseActionButton(
+                    onPressed: () async {
+                      // Validate the form
+                      if (_formKey.currentState!.validate()) {
+                        // If the form is valid, sign the user up
+                        userProfile = UserProfile(
+                          uid: AuthProvider().uid!, 
+                          firstName: _firstNameController.text, 
+                          fatherName: _fatherNameController.text, 
+                          lastName: _lastNameController.text, 
+                          grade: _selectedGrade! == AppConstants.other ? _otherGradeController.text : _selectedGrade!.toString(), 
+                          groupId: AppConstants.none, 
+                          isAdmin: false
+                          );
+
+                        try{
+                          await UserProfileProvider(authProvider: AuthProvider()).saveUserProfile(userProfile);
+                          Navigator.pushNamedAndRemoveUntil(context, '/', (route)=>false);
+                        }
+                        catch (e) {
+                          showSnackBar(context, '$e');
+                        }
+                      } else {
+                        // The error state will be triggered by the validator returning an error message
+                      }
+
+                    }, 
+                    text: Dictionary.signUp
+                  )
                 ],
               ),
             ),
@@ -118,11 +153,11 @@ class _NewUserScreenState extends State<NewUserScreen> {
       items: List.generate(12, (index) => (index + 1).toString())
           .map((grade) => DropdownMenuItem(value: grade, child: Text(grade)))
           .toList()
-        ..add(DropdownMenuItem(value: 'other', child: Text('آخر'))),
+        ..add(DropdownMenuItem(value: AppConstants.other, child: Text('آخر'))),
       onChanged: (value) {
         setState(() {
           _selectedGrade = value;
-          _showOtherGrade = value == 'other';
+          _showOtherGrade = value == AppConstants.other;
         });
       },
       decoration: InputDecoration(

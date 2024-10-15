@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 
 class AppConstants {
   
-  // App title
+  // Important strings
   static const String appTitle = Dictionary.title;
+
+  static const String none = "None";
+  static const String other = "other";
+  static const String trueAsString = "true";
+  static const String falseAsString = "false";
 
   ///--------------------------------------------------------------
   ///Logo:
@@ -77,7 +82,7 @@ class AppConstants {
           borderRadius: BorderRadius.circular(8.0), // Optional: add rounded corners
         );
   static OutlineInputBorder focusedFieldBorder = OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue, width: 2.5),
+          borderSide: BorderSide(color: primaryColor, width: 2.5),
           borderRadius: BorderRadius.circular(8.0),
         );
   static OutlineInputBorder errorFieldBorder = OutlineInputBorder(

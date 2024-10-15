@@ -49,4 +49,47 @@ class NameTextField extends StatelessWidget {
 }
 
 
+class EnglishNameTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String hint;
+  final double marginTop;
+
+  const EnglishNameTextField(
+    this.controller, 
+    this.hint, 
+    {this.marginTop = 0,
+    super.key
+    });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(top: marginTop),
+      child: TextFormField(
+        controller: controller,
+        keyboardType: TextInputType.text,
+        
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: AppConstants.hintStyle,
+          contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+          enabledBorder: AppConstants.defaultFieldBorder,
+          focusedBorder: AppConstants.focusedFieldBorder,
+          errorBorder: AppConstants.errorFieldBorder,
+          focusedErrorBorder: AppConstants.focusedErrorFieldBorder,
+        ),
+
+
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return Dictionary.emptyFieldErrorMessage; 
+          }
+          return null; // Return null if the validation is successful
+        },
+      ),
+    );
+  }
+}
+
+
 

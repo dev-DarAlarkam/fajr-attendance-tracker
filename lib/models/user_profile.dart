@@ -1,13 +1,13 @@
-class User {
+class UserProfile {
   final String uid;             // Firebase unique user ID
   final String firstName;
   final String fatherName;
   final String lastName;
-  final String grade;           // "None" if not applicable
+  final String grade;           
   final String groupId;         // "None" if user has no group
   final bool isAdmin;
 
-  User({
+  UserProfile({
     required this.uid,
     required this.firstName,
     required this.fatherName,
@@ -17,8 +17,8 @@ class User {
     required this.isAdmin,
   });
 
-  factory User.fromFirestore(Map<String, dynamic> data) {
-    return User(
+  factory UserProfile.fromFirestore(Map<String, dynamic> data) {
+    return UserProfile(
       uid: data['uid'] ?? '',
       firstName: data['firstName'] ?? '',
       fatherName: data['fatherName'] ?? '',

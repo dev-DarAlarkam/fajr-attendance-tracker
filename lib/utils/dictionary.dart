@@ -28,6 +28,7 @@ class Dictionary {
   //Forgot Password Messages
   static const String forgetPassword = 'نسيت كلمة المرور؟';
   static const String resetPassword = 'اعادة ضبط كلمة المرور';
+  static const String resetPasswordSuccess = 'تم إرسال رسالة لبريدك الالكتروني';
 
   //Form Messages
   static const String emptyFieldErrorMessage = 'هذا الحقل مطلوب';
@@ -36,5 +37,16 @@ class Dictionary {
   //Profile Messages
   static const String profile = "الملف الشخصي";
   static const String createProfile = "إنشاء ملف شخصي";
+
+
+  //Group Message
+  static const String createGroup = "إنشاء مجموعة";
+  static const String createGroupSuccess = "تم إنشاء مجموعة جديدة بنجاح";
+  static const String joinGroup = "إنضم لمجموعة";
+  static const String joinGroupInput = "أدخل رمز المجموعة";
+
+
+
+
 
 }

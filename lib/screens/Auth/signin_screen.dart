@@ -1,9 +1,13 @@
 import 'package:attendance_tracker/app_constants.dart';
 import 'package:attendance_tracker/providers/auth_provider.dart';
+import 'package:attendance_tracker/screens/Auth/reset_password_screen.dart';
+import 'package:attendance_tracker/screens/Auth/signup_screen.dart';
 import 'package:attendance_tracker/screens/splash_screen.dart';
-import 'package:attendance_tracker/widgets/buttons/reset_password_buttons.dart';
-import 'package:attendance_tracker/widgets/buttons/signin_button.dart';
-import 'package:attendance_tracker/widgets/buttons/signup_buttons.dart';
+import 'package:attendance_tracker/utils/date_format_utils.dart';
+import 'package:attendance_tracker/utils/dictionary.dart';
+import 'package:attendance_tracker/widgets/buttons/navigation_buttons.dart';
+import 'package:attendance_tracker/widgets/buttons/firebase_auth_button.dart';
+import 'package:attendance_tracker/widgets/show_snack_bar.dart';
 import 'package:attendance_tracker/widgets/textFields/emailTextField.dart';
 import 'package:attendance_tracker/widgets/textFields/passwordTextField.dart';
 import 'package:flutter/material.dart';
@@ -37,15 +41,13 @@ class _SigninScreenState extends State<SigninScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      IconButton(
-                        onPressed: () async {
-                          await AuthProvider().signOut();
-                          print("signed out from mainscreen");
-                        }, 
-                        icon: Icon(Icons.ac_unit_outlined)
-                      )
+                      Text(
+                        DateFormatUtils.formatHijriDate(DateTime.now()),
+                        style: AppConstants.textButtonStyle,
+                      ),
                     ],
                   ),
                   // Logo Section
@@ -59,7 +61,20 @@ class _SigninScreenState extends State<SigninScreen> {
                   SizedBox(height: 40),
       
                   // Google SignIn button
-                  GoogleSignInButton(),
+                  FirebaseAuthButton(
+                    onPressed: () async {
+                      try{
+                        await AuthProvider().signInWithGoogle();
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>SplashScreen()));
+                      }
+                      catch (e){
+                        showSnackBar(context, '$e');
+                      }
+                    },
+                    text: Dictionary.googleSignIn,
+                    imagePath: "lib/assets/images/google-logo-white.png",
+                  ),
+
                   SizedBox(height: 20),
       
                   Divider(
@@ -75,19 +90,33 @@ class _SigninScreenState extends State<SigninScreen> {
                   // Password Field
                   PasswordTextField(controller: _passwordController),
                   SizedBox(height: 20),
-      
+
                   // Sign In Button
-                  SigninButton(
-                    _formKey,
-                    _emailController,
-                    _passwordController
-                    ),
+                  FirebaseAuthButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        // If the form is valid, sign in
+                        try{
+                          await AuthProvider().signInWithEmail(_emailController.text, _passwordController.text);
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>SplashScreen()));
+                        }
+                        catch (e){
+                          showSnackBar(context, '$e');
+                        }
+                      } else {
+                        // The error state will be triggered by the validator returning an error message
+                      }
+                    },
+                    text: Dictionary.signIn
+                  ),
                   SizedBox(height: 15),
-      
-                  // Forgot Password Link
-                  ResetPasswordTextButton(),
-                  // Create New Account Link
-                  SignupTextButton(),
+
+                  // Navigate to resetting password
+                  TextNavButton(text: Dictionary.forgetPassword, nextScreen: ResetPasswordScreen()),
+                  SizedBox(height: 10,),
+                  
+                  // Navigating to signing up
+                  TextNavButton(text: Dictionary.signUp, nextScreen: SignupScreen()),
                 ],
               ),
             ),

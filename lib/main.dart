@@ -1,7 +1,10 @@
 import 'package:attendance_tracker/firebase_options.dart';
 import 'package:attendance_tracker/providers/auth_provider.dart';
-import 'package:attendance_tracker/screens/admin_dashboard.dart';
-import 'package:attendance_tracker/screens/signin_screen.dart';
+import 'package:attendance_tracker/providers/group_provider.dart';
+import 'package:attendance_tracker/providers/user_profile_provider.dart';
+import 'package:attendance_tracker/screens/admin/admin_dashboard.dart';
+import 'package:attendance_tracker/screens/Auth/signin_screen.dart';
+import 'package:attendance_tracker/screens/create_profile_screen.dart';
 import 'package:attendance_tracker/screens/splash_screen.dart';
 import 'package:attendance_tracker/screens/user_dashboard.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -26,7 +29,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => AuthProvider())
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (context) => UserProfileProvider(authProvider: AuthProvider())),
+        ChangeNotifierProvider(create: (context) => GroupProvider())
+      
       ],
 
       child: MaterialApp(
@@ -52,6 +58,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (context) => SplashScreen(),
           '/login': (context) => SigninScreen(),
+          '/create-profile': (context) => CreateProfileScreen(),
           '/user': (context) => UserDashboardScreen(),
           '/admin': (context) => AdminDashboardScreen()
           // Add other screens as needed
