@@ -1,4 +1,6 @@
+import 'package:attendance_tracker/app_constants.dart';
 import 'package:attendance_tracker/models/group.dart';
+import 'package:attendance_tracker/models/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -51,6 +53,14 @@ class GroupProvider with ChangeNotifier {
       });
 
       DocumentReference userDoc = _firestore.collection('users').doc(userId);
+
+      final doc = await _firestore.collection('users').doc(userId).get();
+      UserProfile? userProfile = UserProfile.fromFirestore(doc.data()!);
+
+      if(userProfile.groupId != AppConstants.none){
+        await removeUserFromGroup(userProfile.uid, userProfile.grade);
+      }
+
       await userDoc.update({
         'groupId': groupId,
       });

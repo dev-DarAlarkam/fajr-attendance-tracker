@@ -6,6 +6,7 @@ import 'package:attendance_tracker/widgets/buttons/firebase_action_button.dart';
 import 'package:attendance_tracker/widgets/show_snack_bar.dart';
 import 'package:attendance_tracker/widgets/textFields/form_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CreateGroupScreen extends StatefulWidget {
   const CreateGroupScreen({super.key});
@@ -76,10 +77,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                           );
 
                         try{
-                          await GroupProvider().createGroup(group).then((_) {
+                          await GroupProvider().createGroup(group).then((_) async {
                             _groupNameController.clear();
                             _otherGradeController.clear();
-                            showSnackBar(context, Dictionary.createGroupSuccess);
+                            await _showSaveConfirmationDialog(group);
                           });
                         }
                         catch (e) {
@@ -100,6 +101,40 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     );
   }
 
+  Future<void> _showSaveConfirmationDialog(Group group) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // Dialog cannot be dismissed by tapping outside
+      builder: (BuildContext dialogContext) {
+        String message = 'اسم المجموعة: ${group.groupName} \nرمز المجموعة: ${group.groupId}';
+        
+
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: AlertDialog(
+            title: Text(Dictionary.createGroupSuccess),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text(message),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              GestureDetector(
+                onTap: () async {
+                  await Clipboard.setData(ClipboardData(text: Group.generateGroupJoinMessage(group)));
+                  Navigator.of(dialogContext).pop();
+                },
+
+                child: Text('تم')
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   // Dropdown for Grade Selection
   Widget _buildGradeDropdown() {
@@ -140,3 +175,5 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     super.dispose();
   }
 }
+
+

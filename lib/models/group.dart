@@ -1,3 +1,4 @@
+import 'package:attendance_tracker/utils/dictionary.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert' show utf8;
 
@@ -30,6 +31,11 @@ class Group {
       'gradeLevel': gradeLevel,
       'members': members,
     };
+  }
+
+  static String generateGroupJoinMessage(Group group){
+    String message = '${Dictionary.welcome} \nإنضم لمجموعة ${group.groupName} في برنامج الفجر الجديد \nرمز المجموعة: ${group.groupId}';
+    return message;
   }
 
   static String generateGroupId() {

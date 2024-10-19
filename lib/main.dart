@@ -1,4 +1,5 @@
 import 'package:attendance_tracker/firebase_options.dart';
+import 'package:attendance_tracker/providers/attendance_provider.dart';
 import 'package:attendance_tracker/providers/auth_provider.dart';
 import 'package:attendance_tracker/providers/group_provider.dart';
 import 'package:attendance_tracker/providers/user_profile_provider.dart';
@@ -31,7 +32,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => UserProfileProvider(authProvider: AuthProvider())),
-        ChangeNotifierProvider(create: (context) => GroupProvider())
+        ChangeNotifierProvider(create: (context) => GroupProvider()),
+        ChangeNotifierProvider(create: (context) => AttendanceProvider()),
       
       ],
 
@@ -67,3 +69,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+

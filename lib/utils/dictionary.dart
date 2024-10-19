@@ -39,14 +39,18 @@ class Dictionary {
   static const String createProfile = "إنشاء ملف شخصي";
 
 
-  //Group Message
+  //Group Messages
   static const String createGroup = "إنشاء مجموعة";
   static const String createGroupSuccess = "تم إنشاء مجموعة جديدة بنجاح";
   static const String joinGroup = "إنضم لمجموعة";
   static const String joinGroupInput = "أدخل رمز المجموعة";
-
-
-
-
+  
+  
+  //Attendance Messages
+  static const String attendanceTracker = "تسجيل حضور لصلاة الفجر";
+  static const String createAttendanceRecord = "تسجيل الحضور";
+  static const String attendanceRecordSuccess = "تم التسجيل بنجاح";
+  static const String attendanceRecordDuplicate = "لقد قمت بالتسجيل هذا اليوم";
+  static const String attendanceRecordBlocked = "هذه الخاصية مغلقة حالياً";
 
 }

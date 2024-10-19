@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -5,7 +7,7 @@ import 'package:xml/xml.dart';
 import 'package:intl/intl.dart';
 
 class PrayerTimesManager {
-  final String timezoneApiUrl = "http://worldtimeapi.org/api/timezone/Asia/Jerusalem";
+  final String timezoneApiUrl = "https://worldtimeapi.org/api/timezone/Asia/Jerusalem";
   final String xmlPath = "lib/assets/xml/prayers.xml";
   final Map<String, Map<String, DateTime>> _prayerTimes = {};
 
@@ -73,6 +75,7 @@ class PrayerTimesManager {
     );
   }
 
+
   Future<Map<String, DateTime>?> getTodaysPrayerTimes() async {
     if (dstStart == null || dstEnd == null || _prayerTimes.isEmpty) {
       await initialize(); // Initialize if needed
@@ -87,6 +90,19 @@ class PrayerTimesManager {
       return times.map((key, time) => MapEntry(key, time.add(Duration(hours: 1))));
     }
     return times;
+  }
+
+  Future<bool> isItFajrTime() async {
+    Map<String,DateTime>? prayers = await getTodaysPrayerTimes();
+
+    if(prayers != null) {
+      DateTime now = DateTime.now();
+
+      if(now.isAfter(prayers['Fajr']!) && now.isBefore(prayers['Shuruq']!)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   bool _isDST(DateTime date) {
