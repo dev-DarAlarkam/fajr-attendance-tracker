@@ -5,7 +5,7 @@ class UserProfile {
   final String lastName;
   final String grade;           
   final String groupId;         // "None" if user has no group
-  final bool isAdmin;
+  final String rule;            // "user","teacher" or "admin"
 
   UserProfile({
     required this.uid,
@@ -14,7 +14,7 @@ class UserProfile {
     required this.lastName,
     required this.grade,
     required this.groupId,
-    required this.isAdmin,
+    required this.rule,
   });
 
   factory UserProfile.fromFirestore(Map<String, dynamic> data) {
@@ -25,7 +25,7 @@ class UserProfile {
       lastName: data['lastName'] ?? '',
       grade: data['grade'] ?? 'None',
       groupId: data['groupId'] ?? 'None',
-      isAdmin: data['isAdmin'] ?? false,
+      rule: data['rule'] ?? false,
     );
   }
 
@@ -37,11 +37,13 @@ class UserProfile {
       'lastName': lastName,
       'grade': grade,
       'groupId': groupId,
-      'isAdmin': isAdmin,
+      'rule': rule,
     };
   }
 
-
   get fullName => "$firstName $fatherName $lastName";
-  
+
+  static List<String> rules = ["user","teacher","admin"];
+
+
 }

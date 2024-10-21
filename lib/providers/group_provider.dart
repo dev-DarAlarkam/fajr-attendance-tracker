@@ -19,6 +19,21 @@ class GroupProvider with ChangeNotifier {
     }
   }
 
+  Future<String> fetchGroupName(String groupId) async {
+    try {
+      final doc = await _firestore.collection('groups').doc(groupId).get();
+      if (doc.exists) {
+        final group = Group.fromFirestore(doc.data()!);
+        return group.groupName;
+      } else {
+        throw Exception('Failed to fetch group');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch group: $e');
+    }
+  }
+
+
   // Delete an existing group
   Future<void> deleteGroup(String groupId) async {
     try {

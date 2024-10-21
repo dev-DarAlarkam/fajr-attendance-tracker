@@ -1,5 +1,6 @@
 const {onRequest} = require("firebase-functions/v2/https");
 const {onSchedule} = require("firebase-functions/v2/scheduler");
+const {getFirestore} = require("firebase-admin/firestore");
 const admin = require("firebase-admin");
 const cors = require("cors")({origin: true}); // Import and configure CORS
 
@@ -7,6 +8,7 @@ const cors = require("cors")({origin: true}); // Import and configure CORS
 // Initialize Firebase Admin SDK
 admin.initializeApp();
 const firestore = admin.firestore();
+const db = getFirestore();
 
 // Function to test Firestore connection
 exports.testConnection = onRequest({cors: true}, async (req, res) => {
@@ -231,4 +233,81 @@ exports.calculateLeaderboardNow = onRequest({cors: true}, async (req, res) => {
             res.status(500).send({error: "Error calculating leaderboard: " + error.message});
         }
     });
+});
+
+// Cloud function to calculate the leaderboard based on time and group
+exports.calculateLeaderboard = onRequest({cors: true}, async (req, res) => {
+    try {
+        const {startDate, endDate, groupId} = req.body;
+
+        if (!startDate || !endDate) {
+            return res.status(400).send("Start date and end date are required.");
+        }
+
+        // Convert the start and end date to Firestore Timestamps
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        // Reference to users collection
+        let usersQuery = db.collection("users");
+
+        // Filter by group if groupId is provided
+        if (groupId && groupId !== "all") {
+            usersQuery = usersQuery.where("groupId", "==", groupId);
+        }
+
+        const usersSnapshot = await usersQuery.get();
+        if (usersSnapshot.empty) {
+            return res.status(404).send("No users found for the given criteria.");
+        }
+
+        const leaderboard = [];
+
+        // Iterate through each user to calculate their score
+        for (const userDoc of usersSnapshot.docs) {
+            const userData = userDoc.data();
+            const attendanceQuery = db
+                .collection("users")
+                .doc(userDoc.id)
+                .collection("attendance")
+                .where("date", ">=", start)
+                .where("date", "<=", end);
+
+            const attendanceSnapshot = await attendanceQuery.get();
+            let totalScore = 0;
+
+            if (!attendanceSnapshot.empty) {
+                attendanceSnapshot.forEach((attendanceDoc) => {
+                    totalScore += attendanceDoc.data().score;
+                });
+            }
+
+            leaderboard.push({
+                userId: userDoc.id,
+                name: userData.firstName + " " + userData.fatherName + " " + userData.lastName,
+                grade: userData.grade,
+                group: userData.groupId,
+                totalScore: totalScore,
+            });
+        }
+
+        // Sort leaderboard by total score in descending order
+        leaderboard.sort((a, b) => b.totalScore - a.totalScore);
+
+        // Assign rank (handle ties)
+        let rank = 1;
+        let previousScore = leaderboard.length > 0 ? leaderboard[0].totalScore : 0;
+        for (let i = 0; i < leaderboard.length; i++) {
+            if (i > 0 && leaderboard[i].totalScore < previousScore) {
+                rank = i + 1;
+            }
+            leaderboard[i].rank = rank;
+            previousScore = leaderboard[i].totalScore;
+        }
+
+        return res.status(200).json(leaderboard);
+    } catch (error) {
+        console.error("Error calculating leaderboard: ", error);
+        return res.status(500).send("Internal Server Error");
+    }
 });

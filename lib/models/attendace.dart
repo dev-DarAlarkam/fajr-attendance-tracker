@@ -1,4 +1,3 @@
-import 'package:attendance_tracker/app_constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Attendance {
@@ -6,6 +5,7 @@ class Attendance {
   final String userId;               // Firebase UID of the user
   final DateTime date;               // Date of attendance
   final String attendanceLocation;   // 'home', 'mosque1', 'mosque2', 'mosque3', or 'mosque4'
+  final String otherLocation;
   final int score;
 
   Attendance({
@@ -13,6 +13,7 @@ class Attendance {
     required this.userId,
     required this.date,
     required this.attendanceLocation,
+    required this.otherLocation,
     required this.score
   });
 
@@ -22,6 +23,7 @@ class Attendance {
       userId: data['userId'] ?? '',
       date: (data['date'] as Timestamp).toDate(),
       attendanceLocation: data['attendanceLocation'] ?? 'home',
+      otherLocation: data['otherLocation'] ?? 'none',
       score: data['score'] ?? 0
     );
   }
@@ -32,6 +34,7 @@ class Attendance {
       'userId': userId,
       'date': date,
       'attendanceLocation': attendanceLocation,
+      'otherLocation' : otherLocation,
       'score' : score
     };
   }
@@ -43,7 +46,7 @@ class Attendance {
     "mosque_2" : "مسجد الهدى القديم",
     "mosque_3" : "مسجد التقوى",
     "mosque_4" : "مسجد الرحمة",
-    AppConstants.other : "آخر",
+    "other" : "آخر",
   };
 
   //TODO: change the values based on your preference

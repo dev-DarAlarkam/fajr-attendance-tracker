@@ -36,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
           final profile = userProfileProvider.userProfile;
           if (profile != null) {
             setState(() => _hasNavigated = true);
-            final routeName = profile.isAdmin ? '/admin' : '/user';
+            final routeName = '/${profile.rule}';
             Navigator.pushNamedAndRemoveUntil(context, routeName, (route) => false);
           } else {
             setState(() => _hasNavigated = true);

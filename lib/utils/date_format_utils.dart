@@ -8,9 +8,24 @@ class DateFormatUtils {
     return formatter.format(date);
   }
 
-    static String formatHijriDate(DateTime date){
+
+  static String formatHijriDate(DateTime date){
     final hDate = HijriCalendar.fromDate(date);
-    return "${hDate.hDay} ${hDate.shortMonthName} ${hDate.hYear} هـ";
+    late final  String hijriMonth;
+
+    // adjusting values based on the client's requests
+    switch (hDate.longMonthName) {
+      case 'ربيع الثاني':
+        hijriMonth = "ربيع الاخر";
+        break;
+      case 'جمادى الثاني':
+        hijriMonth = 'جمادى الاخرة';
+        break;
+      default:
+        hijriMonth = hDate.longMonthName;
+    }
+
+    return "${hDate.hDay} $hijriMonth ${hDate.hYear} هـ";
   }
 
   // Format a DateTime to a specific pattern
@@ -18,12 +33,5 @@ class DateFormatUtils {
     final DateFormat formatter = DateFormat(pattern);
     return formatter.format(date);
   }
-
-}
-
-
-
-class HijriFormatUtils {
-  
 
 }

@@ -1,24 +1,21 @@
 import 'package:attendance_tracker/app_constants.dart';
 import 'package:attendance_tracker/providers/auth_provider.dart';
 import 'package:attendance_tracker/providers/user_profile_provider.dart';
-import 'package:attendance_tracker/screens/admin/create_group_screen.dart';
 import 'package:attendance_tracker/screens/splash_screen.dart';
+import 'package:attendance_tracker/screens/user/attendance_dashboard.dart';
+import 'package:attendance_tracker/screens/user/group_dashboard.dart';
 import 'package:attendance_tracker/utils/dictionary.dart';
-import 'package:attendance_tracker/widgets/buttons/firebase_action_button.dart';
-import 'package:attendance_tracker/widgets/buttons/navigation_buttons.dart';
-import 'package:attendance_tracker/widgets/show_snack_bar.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AdminDashboardScreen extends StatefulWidget {
-  const AdminDashboardScreen({super.key});
+class UserDashboardScreen extends StatefulWidget {
+  const UserDashboardScreen({super.key});
 
   @override
-  State<AdminDashboardScreen> createState() => _AdminDashboardScreenState();
+  State<UserDashboardScreen> createState() => _UserDashboardScreenState();
 }
 
-class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
+class _UserDashboardScreenState extends State<UserDashboardScreen> {
   
   bool _isLoading = true;
 
@@ -32,7 +29,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   Future<void> _fetchUserProfile() async {
     final userProfileProvider = context.read<UserProfileProvider>(); // Non-listening access
-
     try {
       await userProfileProvider.fetchUserProfile();
     } catch (e) {
@@ -42,6 +38,16 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  Future<void> _signOut() async {
+    await AuthProvider().signOut().then((value){
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => SplashScreen()),
+      );
+    });
+
   }
 
 
@@ -84,14 +90,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         IconButton(
-                          onPressed: () async {
-                            await AuthProvider().signOut().then((value){
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(builder: (context) => SplashScreen()),
-                              );
-                            });
-                          }, 
+                          onPressed: _signOut, 
                           icon: Icon(Icons.exit_to_app)
                         ),
                       ],
@@ -107,7 +106,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   ],
                 ),
               ),
-              NavigatorDashboard(),
+
+              GroupDashboard(),
+              
+              AttendanceDashboard(userId: profile.uid),
+
             ],
           ),
         )
@@ -115,35 +118,3 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     );
   }
 }
-
-class NavigatorDashboard extends StatelessWidget {
-  const NavigatorDashboard({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 400,
-      padding: AppConstants.padding,
-      margin: EdgeInsets.fromLTRB(30,5,30,40),
-      decoration: AppConstants.boxDecoration,
-      child: Column(
-        children: [
-          FirebaseActionButton(
-            onPressed: () async {
-              try {
-                HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('calculateLeaderboardNow');
-                await callable.call();
-              } catch (e) {
-                showSnackBar(context, '$e');
-              }
-            }, 
-            text: "أعد ضبط المراتب"
-          ),
-          SizedBox(height: 10,),
-          ElevatedNavButton(text: "انشئ مجموعة", nextScreen: CreateGroupScreen())
-        ],
-      )
-    );
-  }
-}
-

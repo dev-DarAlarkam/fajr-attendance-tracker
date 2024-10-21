@@ -36,6 +36,7 @@ class AppConstants {
   static EdgeInsets margin = EdgeInsets.symmetric(vertical: 40, horizontal: 30);
   static BorderRadius borderRadius = BorderRadius.circular(8);
 
+  //TODO: add this style and others as a TextTheme
   //Text
   static TextStyle titleTextStyle = TextStyle(
                     fontSize: 26,

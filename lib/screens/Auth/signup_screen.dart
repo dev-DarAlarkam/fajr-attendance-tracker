@@ -90,6 +90,23 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
+  Future<void> signup() async {
+    // Validate the form
+    if (_formKey.currentState!.validate()) {
+      // If the form is valid, sign the user up
+      try{
+        await AuthProvider().signUpWithEmail(_emailController.text, _passwordController.text);
+        Navigator.pushNamedAndRemoveUntil(context, '/', (route)=>false);
+        showSnackBar(context, Dictionary.emailVerificationMessage);
+      }
+      catch (e) {
+        showSnackBar(context, '$e');
+      }
+    } else {
+      // The error state will be triggered by the validator returning an error message
+    }
+  }
+
   @override
   void dispose() {
     _emailController.dispose();

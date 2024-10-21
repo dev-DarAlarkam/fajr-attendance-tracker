@@ -22,9 +22,35 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   String? _selectedGrade;
   bool _showOtherGrade = false;
 
+
+  Future<void> createGroup() async {
+    // Validate the form
+    if (_formKey.currentState!.validate()) {
+      // If the form is valid, sign the user up
+      final group = Group(
+        groupId: Group.generateGroupId(), 
+        groupName: _groupNameController.text, 
+        gradeLevel: _selectedGrade! == AppConstants.other ? _otherGradeController.text : _selectedGrade!.toString(), 
+        members: []
+        );
+
+      try{
+        await GroupProvider().createGroup(group).then((_) async {
+          _groupNameController.clear();
+          _otherGradeController.clear();
+          await _showSaveConfirmationDialog(group);
+        });
+      }
+      catch (e) {
+        showSnackBar(context, '$e');
+      }
+    } else {
+      // The error state will be triggered by the validator returning an error message
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    Group group;
 
     return Form(
       key: _formKey,
@@ -65,31 +91,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   SizedBox(height: 20),
                   
                   FirebaseActionButton(
-                    onPressed: () async {
-                      // Validate the form
-                      if (_formKey.currentState!.validate()) {
-                        // If the form is valid, sign the user up
-                        group = Group(
-                          groupId: Group.generateGroupId(), 
-                          groupName: _groupNameController.text, 
-                          gradeLevel: _selectedGrade! == AppConstants.other ? _otherGradeController.text : _selectedGrade!.toString(), 
-                          members: []
-                          );
-
-                        try{
-                          await GroupProvider().createGroup(group).then((_) async {
-                            _groupNameController.clear();
-                            _otherGradeController.clear();
-                            await _showSaveConfirmationDialog(group);
-                          });
-                        }
-                        catch (e) {
-                          showSnackBar(context, '$e');
-                        }
-                      } else {
-                        // The error state will be triggered by the validator returning an error message
-                      }
-                    }, 
+                  onPressed: createGroup , 
                     text: Dictionary.createGroup
                   )
                 ],

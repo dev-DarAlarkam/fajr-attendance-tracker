@@ -27,10 +27,33 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   String? _selectedGrade;
   bool _showOtherGrade = false;
 
+  Future<void> createProfile() async {
+    if (_formKey.currentState!.validate()) {
+      // If the form is valid, sign the user up
+      final userProfile = UserProfile(
+        uid: AuthProvider().uid!, 
+        firstName: _firstNameController.text, 
+        fatherName: _fatherNameController.text, 
+        lastName: _lastNameController.text, 
+        grade: _selectedGrade! == AppConstants.other ? _otherGradeController.text : _selectedGrade!.toString(), 
+        groupId: AppConstants.none, 
+        rule: UserProfile.rules[0] //"user"
+        );
+
+      try{
+        await UserProfileProvider(authProvider: AuthProvider()).saveUserProfile(userProfile);
+        Navigator.pushNamedAndRemoveUntil(context, '/', (route)=>false);
+      }
+      catch (e) {
+        showSnackBar(context, '$e');
+      }
+    } else {
+      // The error state will be triggered by the validator returning an error message
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    UserProfile userProfile;
-
     return Form(
       key: _formKey,
       child: Scaffold(
@@ -68,32 +91,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                   SizedBox(height: 20),
                   
                   FirebaseActionButton(
-                    onPressed: () async {
-                      // Validate the form
-                      if (_formKey.currentState!.validate()) {
-                        // If the form is valid, sign the user up
-                        userProfile = UserProfile(
-                          uid: AuthProvider().uid!, 
-                          firstName: _firstNameController.text, 
-                          fatherName: _fatherNameController.text, 
-                          lastName: _lastNameController.text, 
-                          grade: _selectedGrade! == AppConstants.other ? _otherGradeController.text : _selectedGrade!.toString(), 
-                          groupId: AppConstants.none, 
-                          isAdmin: false
-                          );
-
-                        try{
-                          await UserProfileProvider(authProvider: AuthProvider()).saveUserProfile(userProfile);
-                          Navigator.pushNamedAndRemoveUntil(context, '/', (route)=>false);
-                        }
-                        catch (e) {
-                          showSnackBar(context, '$e');
-                        }
-                      } else {
-                        // The error state will be triggered by the validator returning an error message
-                      }
-
-                    }, 
+                    onPressed: createProfile, 
                     text: Dictionary.signUp
                   )
                 ],
