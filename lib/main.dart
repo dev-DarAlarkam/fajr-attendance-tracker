@@ -1,11 +1,10 @@
 import 'package:attendance_tracker/firebase_options.dart';
-import 'package:attendance_tracker/providers/attendance_provider.dart';
 import 'package:attendance_tracker/providers/auth_provider.dart';
 import 'package:attendance_tracker/providers/group_provider.dart';
 import 'package:attendance_tracker/providers/user_profile_provider.dart';
-import 'package:attendance_tracker/screens/admin/admin_dashboard.dart';
 import 'package:attendance_tracker/screens/Auth/signin_screen.dart';
 import 'package:attendance_tracker/screens/Auth/create_profile_screen.dart';
+import 'package:attendance_tracker/screens/admin/admin_dashboard.dart';
 import 'package:attendance_tracker/screens/splash_screen.dart';
 import 'package:attendance_tracker/screens/teacher/teacher_dashboard.dart';
 import 'package:attendance_tracker/screens/user/user_dashboard_screen.dart';
@@ -20,6 +19,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   runApp(const MyApp());
 }
 
@@ -34,8 +34,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => UserProfileProvider(authProvider: AuthProvider())),
         ChangeNotifierProvider(create: (context) => GroupProvider()),
-        ChangeNotifierProvider(create: (context) => AttendanceProvider()),
-      
       ],
 
       child: MaterialApp(
@@ -59,12 +57,12 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: {
-          '/': (context) => SplashScreen(),
+          '/': (context) =>  SplashScreen(),
           '/login': (context) => SigninScreen(),
           '/create-profile': (context) => CreateProfileScreen(),
           '/user': (context) => UserDashboardScreen(),
           '/teacher': (context) => TeacherDashboard(),
-          '/admin': (context) => AdminDashboardScreen()
+          '/admin': (context) => AdminDashboardScreen(),
         },
       ),
     );

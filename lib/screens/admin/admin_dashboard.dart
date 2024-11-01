@@ -2,6 +2,7 @@ import 'package:attendance_tracker/app_constants.dart';
 import 'package:attendance_tracker/providers/auth_provider.dart';
 import 'package:attendance_tracker/providers/user_profile_provider.dart';
 import 'package:attendance_tracker/screens/admin/create_group_screen.dart';
+import 'package:attendance_tracker/screens/admin/leaderboard_screen.dart';
 import 'package:attendance_tracker/screens/splash_screen.dart';
 import 'package:attendance_tracker/utils/dictionary.dart';
 import 'package:attendance_tracker/widgets/buttons/firebase_action_button.dart';
@@ -86,6 +87,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         IconButton(
                           onPressed: () async {
                             await AuthProvider().signOut().then((value){
+                              userProfileProvider.clearProfile();
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(builder: (context) => SplashScreen()),
@@ -131,16 +133,21 @@ class NavigatorDashboard extends StatelessWidget {
           FirebaseActionButton(
             onPressed: () async {
               try {
-                HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('calculateLeaderboardNow');
-                await callable.call();
+                HttpsCallable callable = FirebaseFunctions.instanceFor(region: 'europe-west1').httpsCallable('calculateLeaderboardNow');
+
+                await callable.call().then((_) {
+                  print("sucess");
+                });
               } catch (e) {
                 showSnackBar(context, '$e');
               }
-            }, 
+            },
             text: "أعد ضبط المراتب"
           ),
           SizedBox(height: 10,),
-          ElevatedNavButton(text: "انشئ مجموعة", nextScreen: CreateGroupScreen())
+          ElevatedNavButton(text: "انشئ مجموعة", nextScreen: CreateGroupScreen()),
+          SizedBox(height: 10,),
+          ElevatedNavButton(text: "لائحة البيانات", nextScreen: LeaderboardDashboardScreen()),
         ],
       )
     );

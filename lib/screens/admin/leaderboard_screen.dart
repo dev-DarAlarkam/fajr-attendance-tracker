@@ -26,6 +26,7 @@ class _LeaderboardDashboardScreenState
 
   @override
   void initState() {
+    _selectedDateRange = DateTimeRange(start: DateTime.now(), end: DateTime.now().add(Duration(days: 1)));
     super.initState();
     // Initially, no data is fetched
   }
@@ -76,7 +77,7 @@ class _LeaderboardDashboardScreenState
                   child: Text(
                     _selectedDateRange == null
                         ? 'Select Date Range'
-                        : '${_selectedDateRange!.start.toLocal()} - ${_selectedDateRange!.end.toLocal()}',
+                        : '${DateFormatUtils.formatDate(_selectedDateRange!.start)} - ${DateFormatUtils.formatDate(_selectedDateRange!.end)}',
                     style: TextStyle(fontSize: 16),
                   ),
                 ),
@@ -129,21 +130,19 @@ class _LeaderboardDashboardScreenState
 
       try {
         // Prepare the data to send to the cloud function
-        final String startDate = DateFormatUtils.formatDate(_selectedDateRange!.start);
-        final String endDate = DateFormatUtils.formatDate(_selectedDateRange!.end);
+        final String startDate = _selectedDateRange!.start.toString();
+        final String endDate = _selectedDateRange!.end.toString();
 
-        // Log the data to check if it's correct
-        print("Sending to Cloud Function -> startDate: $startDate, endDate: $endDate");
         // Call your cloud function to get the leaderboard data
         final HttpsCallable callable =
-            FirebaseFunctions.instance.httpsCallable('calculateLeaderboard');
+            FirebaseFunctions.instanceFor(region: 'europe-west1').httpsCallable('calculateLeaderboard');
         
-        final response = await callable.call(<String, dynamic>{
-          'startDate' : startDate,
-          'endDate' : endDate,
-          'groupId' : "all"
+        final response = await callable.call(<String,String> {
+          "startDate" : startDate.toString(), 
+          "endDate" : endDate.toString(), 
+          "groupId" : "all".toString()
         });
-
+        
         // Assuming the response contains a list of leaderboard data
         List<dynamic> leaderboard = response.data;
 
@@ -152,7 +151,7 @@ class _LeaderboardDashboardScreenState
             return {
               'fullName': item['name'],
               'grade': item['grade'],
-              'groupName': item['groupName'],
+              'groupName': item['group'],
               'rank': item['rank'],
               'totalScore': item['totalScore'],
             };
@@ -197,12 +196,15 @@ class _LeaderboardDashboardScreenState
     }
 
     return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: DataTable(
-        columns: _createColumns(),
-        rows: _createRows(),
-        sortAscending: _isAscending,
-        sortColumnIndex: _sortColumnIndex,
+      scrollDirection: Axis.vertical,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: DataTable(
+          columns: _createColumns(),
+          rows: _createRows(),
+          sortAscending: _isAscending,
+          sortColumnIndex: _sortColumnIndex,
+        ),
       ),
     );
   }
@@ -211,32 +213,32 @@ class _LeaderboardDashboardScreenState
   List<DataColumn> _createColumns() {
     return [
       DataColumn(
-        label: Text('Full Name'),
+        label: Text('الإسم'),
         onSort: (columnIndex, ascending) {
           _onSortColumn(columnIndex, ascending, 'fullName');
         },
       ),
       DataColumn(
-        label: Text('Grade'),
+        label: Text('الصف'),
         onSort: (columnIndex, ascending) {
           _onSortColumn(columnIndex, ascending, 'grade');
         },
       ),
       DataColumn(
-        label: Text('Group Name'),
+        label: Text('رمز المجموعة'),
         onSort: (columnIndex, ascending) {
           _onSortColumn(columnIndex, ascending, 'groupName');
         },
       ),
       DataColumn(
-        label: Text('Rank'),
+        label: Text('المرتبة'),
         numeric: true,
         onSort: (columnIndex, ascending) {
           _onSortColumn(columnIndex, ascending, 'rank');
         },
       ),
       DataColumn(
-        label: Text('Total Score'),
+        label: Text('مجموع النقاط'),
         numeric: true,
         onSort: (columnIndex, ascending) {
           _onSortColumn(columnIndex, ascending, 'totalScore');

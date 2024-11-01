@@ -20,7 +20,7 @@ class GroupDashboard extends StatelessWidget {
     return Consumer<UserProfileProvider>(
       builder: (context, provider, child) {
         UserProfile profile = provider.userProfile!;
-        bool isInGroup = profile.groupId != 'None';
+        bool isInGroup = profile.groupId != AppConstants.none;
 
         return Container(
           width: 400,
@@ -55,7 +55,7 @@ class GroupDashboard extends StatelessWidget {
           if (leaderboard[i]['userId'] == userId) {
             return rank;
           }
-          if (leaderboard[i]['totalScore'] != previousScore) {
+          if (leaderboard[i]['totalScore'] != "N/A" && leaderboard[i]['totalScore'] != previousScore) {
             rank = i + 1;
             previousScore = leaderboard[i]['totalScore'];
           }
@@ -67,7 +67,7 @@ class GroupDashboard extends StatelessWidget {
     }
   }
 
-    Widget _leaderboardBuilder(context, snapshot) {
+  Widget _leaderboardBuilder(BuildContext context, AsyncSnapshot<int> snapshot) {
     if (snapshot.connectionState == ConnectionState.waiting) {
       return CircularProgressIndicator();
     } else if (snapshot.hasError || snapshot.data == -1) {
@@ -107,7 +107,7 @@ class GroupDashboard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    FutureBuilder(
+                    FutureBuilder<int>(
                       future: fetchUserRank(profile.groupId, profile.uid),
                       builder: _leaderboardBuilder
                     ),
@@ -124,7 +124,7 @@ class GroupDashboard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    FutureBuilder(
+                    FutureBuilder<int>(
                       future: fetchUserRank('community', profile.uid),
                       builder: _leaderboardBuilder,
                     ),

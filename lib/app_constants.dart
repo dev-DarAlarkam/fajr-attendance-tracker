@@ -6,7 +6,7 @@ class AppConstants {
   // Important strings
   static const String appTitle = Dictionary.title;
 
-  static const String none = "None";
+  static const String none = "none";
   static const String other = "other";
   static const String trueAsString = "true";
   static const String falseAsString = "false";

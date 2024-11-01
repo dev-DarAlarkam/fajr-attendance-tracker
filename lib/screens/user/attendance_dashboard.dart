@@ -1,14 +1,13 @@
 import 'package:attendance_tracker/app_constants.dart';
 import 'package:attendance_tracker/models/attendace.dart';
-import 'package:attendance_tracker/providers/attendance_provider.dart';
+import 'package:attendance_tracker/services/attendance_services.dart';
 import 'package:attendance_tracker/utils/date_format_utils.dart';
 import 'package:attendance_tracker/utils/dictionary.dart';
-import 'package:attendance_tracker/utils/prayer_time.dart';
+import 'package:attendance_tracker/services/prayer_times_services.dart';
 import 'package:attendance_tracker/widgets/buttons/firebase_action_button.dart';
 import 'package:attendance_tracker/widgets/show_snack_bar.dart';
 import 'package:attendance_tracker/widgets/textFields/form_text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class AttendanceDashboard extends StatefulWidget {
   final String userId;
@@ -30,97 +29,62 @@ class _AttendanceDashboardState extends State<AttendanceDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AttendanceProvider>(builder:(context, value, child) {
-
-      return Container(
-        width: 400,
-        padding: AppConstants.padding,
-        margin: EdgeInsets.fromLTRB(30,5,30,40),
-        decoration: AppConstants.boxDecoration,
-        child: Stack(
-          children: [
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      FutureBuilder<bool>(
-                        future: AttendanceProvider().attendanceExists(widget.userId, DateTime.now()), 
-                        builder: (context, snapshot) {
-                          if(snapshot.hasData) {
-                            final data = snapshot.data!;
-                            if(data) {
-                              return Text(Dictionary.attendanceRecordDuplicate);
-                            }
+    return Container(
+      width: 400,
+      padding: AppConstants.padding,
+      margin: EdgeInsets.fromLTRB(30,5,30,40),
+      decoration: AppConstants.boxDecoration,
+      child: Stack(
+        children: [
+          Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    StreamBuilder<bool>(
+                      stream: AttendanceServices().attendanceExists(widget.userId, DateTime.now()), 
+                      builder: (context, snapshot) {
+                        if(snapshot.hasData) {
+                          final data = snapshot.data!;
+                          if(data) {
+                            return Text(Dictionary.attendanceRecordDuplicate);
                           }
-                          return SizedBox.shrink();
                         }
-                      )
-                    ],
+                        return SizedBox.shrink();
+                      }
+                    )
+                  ],
+                ),
+                SizedBox(height: 10,),
+        
+                Text(
+                  Dictionary.attendanceTracker,
+                  style: AppConstants.titleTextStyle,
+                  textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 10,),
-          
-                  Text(
-                    Dictionary.attendanceTracker,
-                    style: AppConstants.titleTextStyle,
-                    textAlign: TextAlign.center,
-                    ),
-                  SizedBox(height: 20,),
-                  _buildMosqueDropdown(),
-                  SizedBox(height: 10,),
-                  if(_showOtherMosque) NameTextField(_otherMoqueController, "آخر"),
-                  SizedBox(height: 20,),
+                SizedBox(height: 20,),
+                _buildMosqueDropdown(),
+                SizedBox(height: 10,),
+                if(_showOtherMosque) NameTextField(_otherMoqueController, "آخر"),
+                SizedBox(height: 20,),
 
-                  FirebaseActionButton(
-                    onPressed: _signAttendance, 
-                    text: Dictionary.createAttendanceRecord
-                  )
-                ],
-              )
-            ),
+                FirebaseActionButton(
+                  onPressed: _signAttendance, 
+                  text: Dictionary.createAttendanceRecord
+                )
+              ],
+            )
+          ),
 
-            FutureBuilder<bool>(
-              future: PrayerTimesManager().isItFajrTime(), 
-              builder: (context, snapshot) {
-                
-                if(snapshot.hasData) {
-                  if(snapshot.data! == true) {
-                    return SizedBox.shrink();
-                  }
-                }
-                
-                return Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withAlpha(100), // Semi-transparent overlay
-                    ),
-                    alignment: Alignment.center,
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: const Color.fromRGBO(225, 225, 225, 1),
-                        borderRadius: AppConstants.borderRadius
-                      ),
-                      child: Text(
-                        Dictionary.attendanceRecordBlocked,
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }
-            ),
-          ],
-        ),
-      );
-
-    });
+          FutureBuilder(
+            future: PrayerTimesServices().checkIfFajrTime(), 
+            builder: _buildAttendanceCover
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _signAttendance() async {
@@ -141,7 +105,7 @@ class _AttendanceDashboardState extends State<AttendanceDashboard> {
           score: score
         );
         
-        await AttendanceProvider().createOrUpdateAttendance(widget.userId, record)
+        await AttendanceServices().createOrUpdateAttendance(widget.userId, record)
         .then((_) {
           showSnackBar(context, Dictionary.attendanceRecordSuccess);
           setState(() {});
@@ -156,6 +120,54 @@ class _AttendanceDashboardState extends State<AttendanceDashboard> {
     }
   }
 
+  Widget _buildAttendanceCover(BuildContext context, AsyncSnapshot<bool> snapshot) {
+    
+    if (snapshot.hasError) {
+      return Text(
+        'لا يوجد',
+        style: AppConstants.titleTextStyle,
+        textAlign: TextAlign.center,
+      );
+    } else if(snapshot.hasData) {
+      final bool isFajrTime = snapshot.data!;
+
+      return isFajrTime 
+        ? SizedBox.shrink()
+        : Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white.withAlpha(100), // Semi-transparent overlay
+              ),
+              alignment: Alignment.center,
+              child: Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(225, 225, 225, 1),
+                  borderRadius: AppConstants.borderRadius
+                ),
+                child: Text(
+                  Dictionary.attendanceRecordBlocked,
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          );
+    } else {
+      return Positioned.fill(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withAlpha(100), // Semi-transparent overlay
+          ),
+          alignment: Alignment.center,
+          child: CircularProgressIndicator()
+        )
+      );
+    }
+  }
 
   Widget _buildMosqueDropdown() {
 

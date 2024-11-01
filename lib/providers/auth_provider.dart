@@ -7,12 +7,24 @@ class AuthProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   Timer? _inactivityTimer;
+  User? _previousUser;
+
 
   AuthProvider() {
-    // Listen to Firebase auth state changes
     _auth.authStateChanges().listen((User? user) {
-      notifyListeners(); // Trigger updates on auth state changes
-      _resetInactivityTimer(); // Reset inactivity timer if needed
+
+      // Only trigger if the user state has actually changed
+      if (_previousUser != user) {
+        _previousUser = user;
+        notifyListeners(); // Trigger updates on auth state changes
+
+        // Reset inactivity timer if user is signed in
+        if (user != null) {
+          _resetInactivityTimer();
+        } else {
+          //_cancelInactivityTimer();
+        }
+      }
     });
   }
 
@@ -74,6 +86,7 @@ class AuthProvider with ChangeNotifier {
       await _googleSignIn.signOut();
       _cancelInactivityTimer();
       notifyListeners(); // Ensure listeners are updated after sign-out
+      print("sign out");
     } catch (e) {
       throw Exception('Failed to sign out: $e');
     }
@@ -102,13 +115,14 @@ class AuthProvider with ChangeNotifier {
   // Inactivity timer methods
   void _resetInactivityTimer() {
     _cancelInactivityTimer();
-    _inactivityTimer = Timer(Duration(hours: 2), () {
+    _inactivityTimer = Timer(Duration(hours: 1), () {
       signOut();
     });
   }
 
   void _cancelInactivityTimer() {
     _inactivityTimer?.cancel();
+    _inactivityTimer = null;
   }
 
   void resetTimerOnUserActivity() {
