@@ -53,4 +53,23 @@ class Dictionary {
   static const String attendanceRecordDuplicate = "لقد قمت بالتسجيل هذا اليوم";
   static const String attendanceRecordBlocked = "هذه الخاصية مغلقة حالياً";
 
+  //days of week
+  static const List<String> daysOfWeek = [
+    "الأحد",
+    "الإثنين",
+    "الثلاثاء",
+    "الأربعاء",
+    "الخميس",
+    "الجمعة",
+    "السبت",
+  ];
+
+
+  static const List<String> prayerDoneTypes = [
+    "جماعة",
+    "حاضر",
+    "قضاء",
+    "لم أصلي"
+  ];
+  
 }

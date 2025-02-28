@@ -8,6 +8,11 @@ class DateFormatUtils {
     return formatter.format(date);
   }
 
+  static DateTime parseDate(String date) {
+    final DateFormat formatter = DateFormat('dd-MM-yyyy');
+    return formatter.parse(date);
+  }
+
 
   static String formatHijriDate(DateTime date){
     final hDate = HijriCalendar.fromDate(date);

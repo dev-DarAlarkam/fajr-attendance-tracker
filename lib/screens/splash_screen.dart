@@ -18,46 +18,41 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _handleNavigation();
     });
   }
 
   Future<void> _handleNavigation() async {
-    final authProvider = context.read<AuthProvider>();
-    final userProfileProvider = context.read<UserProfileProvider>();
-    // Check authentication status
-    if (authProvider.isAuthenticated) {
-      if (authProvider.isEmailVerified) {
-        try {
-          await userProfileProvider.fetchUserProfile();
-          if (_hasNavigated) return;
+    if (_hasNavigated) return;
 
-          final profile = userProfileProvider.userProfile;
-          if (profile != null) {
-            setState(() => _hasNavigated = true);
-            final routeName = '/${profile.rule}';
-            Navigator.pushNamedAndRemoveUntil(context, routeName, (route) => false);
-          } else {
-            setState(() => _hasNavigated = true);
-            Navigator.pushNamedAndRemoveUntil(context, '/create-profile', (route) => false);
-          }
-        } catch (e) {
-          showSnackBar(context, 'Error loading profile: $e');
-        }
-      } else {
-        _navigateTo('/login');
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      await Future.delayed(const Duration(seconds: 2));
+
+      if (!authProvider.isAuthenticated || !authProvider.isEmailVerified) {
+        return _navigateTo('/login');
       }
-    } else {
+
+      final userProfileProvider = context.read<UserProfileProvider>();
+      await userProfileProvider.fetchUserProfile();
+      
+      if (_hasNavigated) return;
+      
+      final profile = userProfileProvider.userProfile;
+      final routeName = profile != null ? '/${profile.rule}' : '/create-profile';
+      _navigateTo(routeName);
+
+    } catch (e) {
+      showSnackBar(context, 'Navigation error: $e');
       _navigateTo('/login');
     }
   }
 
   void _navigateTo(String routeName) {
-    if (!_hasNavigated) {
-      setState(() => _hasNavigated = true);
-      Navigator.pushNamedAndRemoveUntil(context, routeName, (route) => false);
-    }
+    if (_hasNavigated) return;
+    _hasNavigated = true;
+    Navigator.pushNamedAndRemoveUntil(context, routeName, (route) => false);
   }
 
   @override

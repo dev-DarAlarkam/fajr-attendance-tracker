@@ -1,10 +1,13 @@
 import 'package:attendance_tracker/firebase_options.dart';
 import 'package:attendance_tracker/providers/auth_provider.dart';
+import 'package:attendance_tracker/providers/checklist_item_provider.dart';
+import 'package:attendance_tracker/providers/checklist_provider.dart';
 import 'package:attendance_tracker/providers/group_provider.dart';
 import 'package:attendance_tracker/providers/user_profile_provider.dart';
 import 'package:attendance_tracker/screens/Auth/signin_screen.dart';
 import 'package:attendance_tracker/screens/Auth/create_profile_screen.dart';
 import 'package:attendance_tracker/screens/admin/admin_dashboard.dart';
+import 'package:attendance_tracker/screens/admin/checklist_item_manager_screen.dart';
 import 'package:attendance_tracker/screens/splash_screen.dart';
 import 'package:attendance_tracker/screens/teacher/teacher_dashboard.dart';
 import 'package:attendance_tracker/screens/user/user_dashboard_screen.dart';
@@ -34,6 +37,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => UserProfileProvider(authProvider: AuthProvider())),
         ChangeNotifierProvider(create: (context) => GroupProvider()),
+        ChangeNotifierProvider(create: (context) => ChecklistItemProvider()),
+        ChangeNotifierProvider(create: (context) => ChecklistProvider(checklistItemProvider: ChecklistItemProvider())),
       ],
 
       child: MaterialApp(
@@ -57,6 +62,7 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: {
+          // '/': (context) =>  ChecklistItemManagerScreen(),
           '/': (context) =>  SplashScreen(),
           '/login': (context) => SigninScreen(),
           '/create-profile': (context) => CreateProfileScreen(),
