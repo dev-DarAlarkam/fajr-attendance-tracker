@@ -93,7 +93,7 @@ class _ItemsCreationDashboardState extends State<ItemsCreationDashboard> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
-              NameTextField(_nameController, "ادخل اسم المهمة"),
+              ComplexNameTextField(_nameController, "ادخل اسم المهمة"),
               const SizedBox(height: 20),
               _buildTypeToggleSwitch(),
               const SizedBox(height: 20),
@@ -243,7 +243,7 @@ class _ItemsCreationDashboardState extends State<ItemsCreationDashboard> {
 class ItemsViewDashboard extends StatelessWidget {
   const ItemsViewDashboard({super.key});
 
-  String _ItemSubtitle(ChecklistItem item) {
+  String _itemSubtitle(ChecklistItem item) {
     String subtitle = '';
 
     if (item.itemType == ChecklistItemType.normal) {
@@ -256,10 +256,9 @@ class ItemsViewDashboard extends StatelessWidget {
       subtitle += ' يومي';
     } else {
       if (item.daysOfWeek != null) {
-        subtitle += ' ' +
-            item.daysOfWeek!
+        subtitle += ' ${item.daysOfWeek!
                 .map((day) => Dictionary.daysOfWeek[day.index])
-                .join(', ');
+                .join(', ')}';
       }
     }
     return subtitle;
@@ -313,7 +312,7 @@ class ItemsViewDashboard extends StatelessWidget {
                         const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     child: ListTile(
                       title: Text(item.displayName),
-                      subtitle: Text(_ItemSubtitle(item)),
+                      subtitle: Text(_itemSubtitle(item)),
                       trailing: IconButton(
                         icon: const Icon(Icons.delete),
                         onPressed: () async {

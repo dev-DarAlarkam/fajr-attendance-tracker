@@ -109,7 +109,6 @@ exports.calculateDailyLeaderboard = onSchedule({schedule: "0 7 * * *", timeZone:
     }
 });
 
-//TODO: add another filter to the counters (.where("type", "=", "user"))
 // Function to calculate the 30-day leaderboard for community and groups immediately
 exports.calculateLeaderboardNow = functions.https.onCall(
     {
@@ -183,7 +182,6 @@ exports.calculateLeaderboardNow = functions.https.onCall(
     },
 );
 
-//TODO: add another filter to the counters (.where("type", "=", "user"))
 // Cloud function to calculate the leaderboard based on time and group
 exports.calculateLeaderboard = functions.https.onCall(
     {

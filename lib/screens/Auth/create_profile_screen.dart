@@ -23,6 +23,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _birthdayController = TextEditingController();
   final TextEditingController _otherGradeController = TextEditingController();
+  String? _selectedGender;
   DateTime? _selectedDate;
   String? _selectedGrade;
   bool _showOtherGrade = false;
@@ -35,10 +36,12 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
         firstName: _firstNameController.text, 
         fatherName: _fatherNameController.text, 
         lastName: _lastNameController.text, 
+        gender: _selectedGender!,
+        birthday: _birthdayController.text,
         grade: _selectedGrade! == AppConstants.other ? _otherGradeController.text : _selectedGrade!.toString(), 
         groupId: AppConstants.none, 
         rule: UserProfile.rules[0] //"user"
-        );
+      );
 
       try{
         await UserProfileProvider(authProvider: AuthProvider()).saveUserProfile(userProfile);
@@ -82,6 +85,9 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                   NameTextField(_fatherNameController, 'اسم الأب', marginTop: 10,),
                   NameTextField(_lastNameController, 'العائلة', marginTop: 10,),
                   SizedBox(height: 20),
+                  // Gender Dropdown
+                  _buildGenderField(context),
+                  SizedBox(height: 20),
                   // Birthday picker
                   _buildBirthdayField(context),
                   SizedBox(height: 20),
@@ -102,6 +108,36 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
       ),
     );
   }
+
+  Widget _buildGenderField(BuildContext context) {
+    return DropdownButtonFormField<String>(
+      value: _selectedGrade,
+      hint: Text('يرجى تحديد الجنس', style: AppConstants.hintStyle,),
+      items: [
+        DropdownMenuItem(value: "ذكر", child: Text("ذكر")),
+        DropdownMenuItem(value: "أنثى", child: Text("أنثى"))
+      ],
+      onChanged: (value) {
+        setState(() {
+          _selectedGender = value;
+        });
+      },
+      decoration: InputDecoration(
+        enabledBorder: AppConstants.defaultFieldBorder,
+        focusedBorder: AppConstants.focusedFieldBorder,
+        errorBorder: AppConstants.errorFieldBorder,
+        focusedErrorBorder: AppConstants.focusedErrorFieldBorder,
+        contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+      ),
+      validator: (value) {
+        if(value == null) {
+          return Dictionary.emptyFieldErrorMessage;
+        }
+        return null;
+      },
+    );
+  }
+
 
   Widget _buildBirthdayField(BuildContext context) {
     return TextFormField(

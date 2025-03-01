@@ -7,7 +7,6 @@ import 'package:attendance_tracker/providers/user_profile_provider.dart';
 import 'package:attendance_tracker/screens/Auth/signin_screen.dart';
 import 'package:attendance_tracker/screens/Auth/create_profile_screen.dart';
 import 'package:attendance_tracker/screens/admin/admin_dashboard.dart';
-import 'package:attendance_tracker/screens/admin/checklist_item_manager_screen.dart';
 import 'package:attendance_tracker/screens/splash_screen.dart';
 import 'package:attendance_tracker/screens/teacher/teacher_dashboard.dart';
 import 'package:attendance_tracker/screens/user/user_dashboard_screen.dart';
@@ -62,7 +61,6 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: {
-          // '/': (context) =>  ChecklistItemManagerScreen(),
           '/': (context) =>  SplashScreen(),
           '/login': (context) => SigninScreen(),
           '/create-profile': (context) => CreateProfileScreen(),

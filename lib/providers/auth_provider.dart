@@ -6,7 +6,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-  Timer? _inactivityTimer;
   User? _previousUser;
 
 
@@ -17,13 +16,6 @@ class AuthProvider with ChangeNotifier {
       if (_previousUser != user) {
         _previousUser = user;
         notifyListeners(); // Trigger updates on auth state changes
-
-        // Reset inactivity timer if user is signed in
-        if (user != null) {
-          _resetInactivityTimer();
-        } else {
-          //_cancelInactivityTimer();
-        }
       }
     });
   }
@@ -39,7 +31,6 @@ class AuthProvider with ChangeNotifier {
     try {
       await _auth.createUserWithEmailAndPassword(email: email, password: password);
       await sendEmailVerification();
-      _resetInactivityTimer();
       notifyListeners(); // Ensure listeners are updated after sign-up
     } catch (e) {
       throw Exception('Failed to sign up: $e');
@@ -53,7 +44,6 @@ class AuthProvider with ChangeNotifier {
       if (!_auth.currentUser!.emailVerified) {
         throw Exception('Please verify your email first.');
       }
-      _resetInactivityTimer();
       notifyListeners(); // Ensure listeners are updated after sign-in
     } catch (e) {
       throw Exception('Failed to sign in: $e');
@@ -71,7 +61,6 @@ class AuthProvider with ChangeNotifier {
           idToken: googleAuth.idToken,
         );
         await _auth.signInWithCredential(credential);
-        _resetInactivityTimer();
         notifyListeners(); // Ensure listeners are updated after Google sign-in
       }
     } catch (e) {
@@ -84,9 +73,7 @@ class AuthProvider with ChangeNotifier {
     try {
       await _auth.signOut();
       await _googleSignIn.signOut();
-      _cancelInactivityTimer();
       notifyListeners(); // Ensure listeners are updated after sign-out
-      print("sign out");
     } catch (e) {
       throw Exception('Failed to sign out: $e');
     }
@@ -110,28 +97,5 @@ class AuthProvider with ChangeNotifier {
     } catch (e) {
       throw Exception('Failed to send email verification: $e');
     }
-  }
-
-  // Inactivity timer methods
-  void _resetInactivityTimer() {
-    _cancelInactivityTimer();
-    _inactivityTimer = Timer(Duration(hours: 1), () {
-      signOut();
-    });
-  }
-
-  void _cancelInactivityTimer() {
-    _inactivityTimer?.cancel();
-    _inactivityTimer = null;
-  }
-
-  void resetTimerOnUserActivity() {
-    _resetInactivityTimer();
-  }
-
-  @override
-  void dispose() {
-    _cancelInactivityTimer();
-    super.dispose();
   }
 }

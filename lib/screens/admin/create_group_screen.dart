@@ -83,7 +83,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   ),
                   SizedBox(height: 40),
                   // Name Fields
-                  NameTextField(_groupNameController, 'اسم المجموعة'),
+                  ComplexNameTextField(_groupNameController, 'اسم المجموعة'),
                   SizedBox(height: 20),
                   // Grade Dropdown
                   _buildGradeDropdown(),

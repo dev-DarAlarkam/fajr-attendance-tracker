@@ -1,6 +1,7 @@
 import 'package:attendance_tracker/app_constants.dart';
 import 'package:attendance_tracker/models/checklist.dart';
 import 'package:attendance_tracker/providers/checklist_provider.dart';
+import 'package:attendance_tracker/screens/user/checklist_redirect_screen.dart';
 import 'package:attendance_tracker/utils/date_format_utils.dart';
 import 'package:attendance_tracker/utils/dictionary.dart';
 import 'package:attendance_tracker/widgets/buttons/firebase_action_button.dart';
@@ -39,7 +40,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                 children: [
                   // Back Button
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       BackButton(),
                     ],
@@ -56,6 +57,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                   const SizedBox(height: 20),
                   const Divider(),
                   const SizedBox(height: 20),
+                  
                   FutureBuilder(
                     future: context.read<ChecklistProvider>().getTodaysChecklist(widget.userId),
                     builder: (context, AsyncSnapshot<Checklist> snapshot) {
@@ -69,7 +71,8 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                       checklist.items.sort((a, b) => a.index!.compareTo(b.index!),);
                       return Column(
                         children: [
-                          Text(DateFormatUtils.formatDate(checklist.date)),
+                          Text("${DateFormatUtils.formatHijriDate(checklist.date)} | ${DateFormatUtils.formatDate(checklist.date)}"),
+                          const SizedBox(height: 20),
                           // Checklist Items
                           ...checklist.items.map((item) {
                             if(item.isPermanent == false) {
@@ -82,11 +85,11 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                             } else {
                               return _buildChecklistItemPrayer(item);
                             }
-                          }).toList(),
+                          }),
                           // Submit Button
                           FirebaseActionButton(
                             onPressed: _submitChecklist, 
-                            text: 'Submit'
+                            text: 'إرسال'
                           )
                           
                         ],
@@ -148,15 +151,15 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
     
   }
 
+  
+  
   Future<void> _submitChecklist() async {
-    
     try {
-      await context.read<ChecklistProvider>().createOrUpdateChecklist(widget.userId, checklist).then((value) {
-        //TODO: signout and redirect to splash screen
-        
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Checklist submitted successfully!'),
-        ));
+      await context.read<ChecklistProvider>().createOrUpdateChecklist(widget.userId, checklist).then((value) async {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ChecklistRedirectScreen()),
+        );
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

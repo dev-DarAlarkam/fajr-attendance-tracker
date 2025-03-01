@@ -1,7 +1,6 @@
 import 'package:attendance_tracker/app_constants.dart';
 import 'package:attendance_tracker/providers/auth_provider.dart';
 import 'package:attendance_tracker/providers/user_profile_provider.dart';
-import 'package:attendance_tracker/widgets/show_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,8 +17,8 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _handleNavigation();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _handleNavigation();
     });
   }
 
@@ -44,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
       _navigateTo(routeName);
 
     } catch (e) {
-      showSnackBar(context, 'Navigation error: $e');
+      print('Error: $e');
       _navigateTo('/login');
     }
   }

@@ -4,8 +4,11 @@ import 'package:cloud_functions/cloud_functions.dart'; // Firebase Functions
 import 'package:flutter/services.dart';
 
 class LeaderboardDashboardScreen extends StatefulWidget {
+
+  const LeaderboardDashboardScreen({super.key});
+
   @override
-  _LeaderboardDashboardScreenState createState() =>
+  State<LeaderboardDashboardScreen> createState() =>
       _LeaderboardDashboardScreenState();
 }
 

@@ -10,7 +10,7 @@ class UserProfileProvider with ChangeNotifier {
 
   UserProfileProvider({required this.authProvider});
 
-  UserProfile? get userProfile => _userProfile;
+  UserProfile? get userProfile => _userProfile ?? null;
 
   // Check if a user's profile document exists
   Future<bool> doesProfileExist({String? uid}) async {
@@ -19,6 +19,20 @@ class UserProfileProvider with ChangeNotifier {
 
     final doc = await _firestore.collection('users').doc(userId).get();
     return doc.exists;
+  }
+
+  Future<UserProfile?> fetchUserProfileById(String userId) async {
+    try {
+      final doc = await _firestore.collection('users').doc(userId).get();
+      if (doc.exists) {
+        _userProfile = UserProfile.fromFirestore(doc.data()!);
+        return _userProfile;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch user profile: $e');
+    }
   }
 
   // Fetch a user profile; if uid is null, fetch the current user's profile

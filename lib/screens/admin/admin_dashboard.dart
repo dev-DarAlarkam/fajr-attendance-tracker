@@ -1,6 +1,7 @@
 import 'package:attendance_tracker/app_constants.dart';
 import 'package:attendance_tracker/providers/auth_provider.dart';
 import 'package:attendance_tracker/providers/user_profile_provider.dart';
+import 'package:attendance_tracker/screens/admin/checklist_item_manager_screen.dart';
 import 'package:attendance_tracker/screens/admin/create_group_screen.dart';
 import 'package:attendance_tracker/screens/admin/leaderboard_screen.dart';
 import 'package:attendance_tracker/screens/splash_screen.dart';
@@ -37,7 +38,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     try {
       await userProfileProvider.fetchUserProfile();
     } catch (e) {
-      print('Error fetching user profile: $e');
+      throw Exception('Failed to fetch user profile: $e');
     } finally {
       setState(() {
         _isLoading = false;
@@ -136,8 +137,8 @@ class NavigatorDashboard extends StatelessWidget {
                 HttpsCallable callable = FirebaseFunctions.instanceFor(region: 'europe-west1').httpsCallable('calculateLeaderboardNow');
 
                 await callable.call().then((_) {
-                  print("sucess");
-                });
+                  showSnackBar(context, 'تمت عملية إعادة ضبط المراتب بنجاح');
+                }); 
               } catch (e) {
                 showSnackBar(context, '$e');
               }
@@ -148,6 +149,8 @@ class NavigatorDashboard extends StatelessWidget {
           ElevatedNavButton(text: "انشئ مجموعة", nextScreen: CreateGroupScreen()),
           SizedBox(height: 10,),
           ElevatedNavButton(text: "لائحة البيانات", nextScreen: LeaderboardDashboardScreen()),
+          SizedBox(height: 10,),
+          ElevatedNavButton(text: "ادارة برنامج المحاسبة", nextScreen: ChecklistItemManagerScreen(),)
         ],
       )
     );

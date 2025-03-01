@@ -1,6 +1,6 @@
 class Dictionary {
 
-  static const String title = "صلاة الفجر في جماعة";
+  static const String title = "برنامج المحاسبة الرمضاني";
 
   //general messaages
   static const String welcome = "السلام عليكم";

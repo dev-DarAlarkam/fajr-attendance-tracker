@@ -1,5 +1,6 @@
 import 'package:attendance_tracker/app_constants.dart';
 import 'package:attendance_tracker/models/user_profile.dart';
+import 'package:attendance_tracker/providers/group_provider.dart';
 import 'package:attendance_tracker/providers/user_profile_provider.dart';
 import 'package:attendance_tracker/utils/dictionary.dart';
 import 'package:attendance_tracker/widgets/buttons/firebase_action_button.dart';
@@ -31,13 +32,45 @@ class GroupDashboard extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              isInGroup
-                ? _buildLeaderboard(profile)
-                : _buildJoinGroupForm(context, provider) 
+              if(isInGroup)
+                FutureBuilder(
+                  future: context.read<GroupProvider>().fetchGroupName(profile.groupId), 
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Text("...");
+                    } else if (snapshot.hasError) {
+                      return Text(
+                        'لا يوجد',
+                        style: AppConstants.titleTextStyle,
+                        textAlign: TextAlign.center,
+                      );
+                    } else {
+                      return _welcomeMessage(snapshot.data as String);
+                    }
+                  },
+                )
+              else
+                _buildJoinGroupForm(context, provider) 
             ],
           ),
         );
       },
+    );
+  }
+
+
+  Widget _welcomeMessage(String groupName) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'مجموعتك هي \n $groupName',
+          style: AppConstants.titleTextStyle,
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 20,),
+      ],
     );
   }
 
