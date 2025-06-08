@@ -1,4 +1,5 @@
 import 'package:attendance_tracker/app_constants.dart';
+import 'package:attendance_tracker/models/user_profile.dart';
 import 'package:attendance_tracker/screens/user/checklist_screen.dart';
 import 'package:attendance_tracker/services/prayer_times_services.dart';
 import 'package:attendance_tracker/utils/date_format_utils.dart';
@@ -8,8 +9,8 @@ import 'package:flutter/material.dart';
 
 class ChecklistNavigation extends StatelessWidget {
 
-  final String userId;
-  const ChecklistNavigation({required this.userId, super.key});
+  final UserProfile userProfile;
+  const ChecklistNavigation({required this.userProfile, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,7 @@ class ChecklistNavigation extends StatelessWidget {
                 style: AppConstants.textButtonStyle,
               ),
               const SizedBox(height: 20),
-              ElevatedNavButton(text: "للمحاسبة اليومية", nextScreen: ChecklistScreen(userId: userId))
+              ElevatedNavButton(text: "للمحاسبة اليومية", nextScreen: ChecklistScreen(userProfile: userProfile))
             ],
           ),
 

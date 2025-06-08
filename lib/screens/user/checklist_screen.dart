@@ -1,7 +1,9 @@
 import 'package:attendance_tracker/app_constants.dart';
 import 'package:attendance_tracker/models/checklist.dart';
+import 'package:attendance_tracker/models/user_profile.dart';
 import 'package:attendance_tracker/providers/checklist_provider.dart';
 import 'package:attendance_tracker/screens/user/checklist_redirect_screen.dart';
+import 'package:attendance_tracker/services/counter_services.dart';
 import 'package:attendance_tracker/utils/date_format_utils.dart';
 import 'package:attendance_tracker/utils/dictionary.dart';
 import 'package:attendance_tracker/widgets/buttons/firebase_action_button.dart';
@@ -9,9 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChecklistScreen extends StatefulWidget {
-  final String userId;
+  final UserProfile userProfile;
 
-  const ChecklistScreen({required this.userId, super.key});
+  const ChecklistScreen({required this.userProfile, super.key});
 
   @override
   State<ChecklistScreen> createState() => _ChecklistScreenState();
@@ -59,7 +61,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                   const SizedBox(height: 20),
                   
                   FutureBuilder(
-                    future: context.read<ChecklistProvider>().getTodaysChecklist(widget.userId),
+                    future: context.read<ChecklistProvider>().getTodaysChecklist(widget.userProfile.uid),
                     builder: (context, AsyncSnapshot<Checklist> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return CircularProgressIndicator();
@@ -140,7 +142,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
               items: PrayerDoneType.values
                   .map((e) => DropdownMenuItem(
                         value: e,
-                        child: Text(Dictionary.prayerDoneTypes[e.index]),
+                        child: e.index == 4 ? Text('${Dictionary.prayerDoneTypes[e.index]} - ${Dictionary.excuseDoneType[item.index!]}') : Text(Dictionary.prayerDoneTypes[e.index]),
                       ))
                   .toList(),
             ),
@@ -155,7 +157,9 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
   
   Future<void> _submitChecklist() async {
     try {
-      await context.read<ChecklistProvider>().createOrUpdateChecklist(widget.userId, checklist).then((value) async {
+      await context.read<ChecklistProvider>().createOrUpdateChecklist(widget.userProfile.uid, checklist).then((value) async {
+        await CounterServices().incrementGlobalCounter();
+        await CounterServices().incrementGroupCounter(widget.userProfile.groupId);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => ChecklistRedirectScreen()),

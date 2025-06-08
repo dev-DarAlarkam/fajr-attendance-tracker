@@ -120,7 +120,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
             
             AttendanceDashboard(userId: profile.uid),
 
-            ChecklistNavigation(userId: profile.uid),
+            ChecklistNavigation(userProfile: profile),
 
           ],
     );

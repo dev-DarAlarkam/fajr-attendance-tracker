@@ -34,6 +34,7 @@ class AppConstants {
   //Values
   static EdgeInsets padding = EdgeInsets.symmetric(vertical: 40, horizontal: 30);
   static EdgeInsets margin = EdgeInsets.symmetric(vertical: 40, horizontal: 30);
+  static EdgeInsets containerMargain = EdgeInsets.symmetric(vertical: 10, horizontal: 30);
   static BorderRadius borderRadius = BorderRadius.circular(8);
 
   //TODO: add this style and others as a TextTheme

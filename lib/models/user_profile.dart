@@ -51,7 +51,7 @@ class UserProfile {
     };
   }
 
-  get fullName => "$firstName $fatherName $lastName";
+  String get fullName => "$firstName $fatherName $lastName";
 
   static List<String> rules = ["user","teacher","admin"];
 

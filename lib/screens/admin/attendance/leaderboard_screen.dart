@@ -232,6 +232,7 @@ class _LeaderboardDashboardScreenState
         onSort: (columnIndex, ascending) {
           _onSortColumn(columnIndex, ascending, 'groupName');
         },
+        
       ),
       DataColumn(
         label: Text('المرتبة'),

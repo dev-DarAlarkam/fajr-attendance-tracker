@@ -1,9 +1,9 @@
 import 'package:attendance_tracker/app_constants.dart';
 import 'package:attendance_tracker/providers/auth_provider.dart';
 import 'package:attendance_tracker/providers/user_profile_provider.dart';
-import 'package:attendance_tracker/screens/admin/checklist_item_manager_screen.dart';
-import 'package:attendance_tracker/screens/admin/create_group_screen.dart';
-import 'package:attendance_tracker/screens/admin/leaderboard_screen.dart';
+import 'package:attendance_tracker/screens/admin/checklist/checklist_item_manager_screen.dart';
+import 'package:attendance_tracker/screens/admin/group/create_group_screen.dart';
+import 'package:attendance_tracker/screens/admin/attendance/leaderboard_screen.dart';
 import 'package:attendance_tracker/screens/splash_screen.dart';
 import 'package:attendance_tracker/utils/dictionary.dart';
 import 'package:attendance_tracker/widgets/buttons/firebase_action_button.dart';

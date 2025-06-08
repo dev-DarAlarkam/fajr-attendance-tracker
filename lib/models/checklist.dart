@@ -50,7 +50,10 @@ enum PrayerDoneType {
   ontime,
   late,
   missed,
+  excused
 }
+
+
 
 /// A unified checklist item that can represent either a 'normal' item or a 'prayer' item.
 /// Some items can be repeated daily (`isPermanent == true`), or specific to certain days.

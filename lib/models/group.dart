@@ -7,20 +7,23 @@ class Group {
   final String groupName;
   final String gradeLevel;           // Grade level associated with the group
   final List<String> members;        // List of user IDs
+  final String teacherId;            // teacher ID
 
   Group({
     required this.groupId,
     required this.groupName,
     required this.gradeLevel,
     required this.members,
+    required this.teacherId,
   });
 
   factory Group.fromFirestore(Map<String, dynamic> data) {
     return Group(
       groupId: data['groupId'] ?? '',
-      groupName: data['groupName'] ?? '',
+      groupName: data['groupName'] ?? 'None',
       gradeLevel: data['gradeLevel'] ?? 'None',
       members: List<String>.from(data['members'] ?? []),
+      teacherId: data['teacherId'] ?? 'None',
     );
   }
 
@@ -30,6 +33,7 @@ class Group {
       'groupName': groupName,
       'gradeLevel': gradeLevel,
       'members': members,
+      'teacherId': teacherId,
     };
   }
 

@@ -31,7 +31,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         groupId: Group.generateGroupId(), 
         groupName: _groupNameController.text, 
         gradeLevel: _selectedGrade! == AppConstants.other ? _otherGradeController.text : _selectedGrade!.toString(), 
-        members: []
+        members: [],
+        teacherId: 'None',
         );
 
       try{
