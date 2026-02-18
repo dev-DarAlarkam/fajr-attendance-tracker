@@ -111,7 +111,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   Widget _buildGenderField(BuildContext context) {
     return DropdownButtonFormField<String>(
-      value: _selectedGrade,
+      value: _selectedGender,
       hint: Text('يرجى تحديد الجنس', style: AppConstants.hintStyle,),
       items: [
         DropdownMenuItem(value: "ذكر", child: Text("ذكر")),

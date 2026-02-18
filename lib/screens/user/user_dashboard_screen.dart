@@ -19,8 +19,6 @@ class UserDashboardScreen extends StatefulWidget {
 
 class _UserDashboardScreenState extends State<UserDashboardScreen> {
 
-  final EdgeInsets margin = EdgeInsets.symmetric(vertical: 5, horizontal: 30);
-
   Future<void> _signOut() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final userProfileProvider = Provider.of<UserProfileProvider>(context, listen: false);
@@ -89,7 +87,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
             Container(
               width: 400,
               padding: AppConstants.padding,
-              margin: margin,
+              margin: EdgeInsets.fromLTRB(30,5,30,15),
               decoration: AppConstants.boxDecoration,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -122,6 +120,8 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
 
             ChecklistNavigation(userProfile: profile),
 
+            SizedBox(height: 50),
+
           ],
     );
   }
@@ -130,7 +130,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
     return Container(
       width: 400,
       padding: AppConstants.padding,
-      margin: margin,
+      margin: AppConstants.margin,
       decoration: AppConstants.boxDecoration,
       child: Column(
         mainAxisSize: MainAxisSize.min,

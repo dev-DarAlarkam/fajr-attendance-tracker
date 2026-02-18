@@ -3,6 +3,9 @@ import 'package:attendance_tracker/providers/auth_provider.dart';
 import 'package:attendance_tracker/providers/user_profile_provider.dart';
 import 'package:attendance_tracker/screens/admin/checklist/checklist_item_manager_screen.dart';
 import 'package:attendance_tracker/screens/admin/group/create_group_screen.dart';
+import 'package:attendance_tracker/screens/admin/users/users_dashboard.dart';
+import 'package:attendance_tracker/screens/admin/users/users_management_screen.dart';
+import 'package:attendance_tracker/screens/groups/groups_screen.dart';
 import 'package:attendance_tracker/screens/admin/attendance/leaderboard_screen.dart';
 import 'package:attendance_tracker/screens/splash_screen.dart';
 import 'package:attendance_tracker/utils/dictionary.dart';
@@ -51,7 +54,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   Widget build(BuildContext context) {
     final userProfileProvider = context.watch<UserProfileProvider>(); // Listening access
     final profile = userProfileProvider.userProfile;
-    EdgeInsets margin = EdgeInsets.symmetric(vertical: 5, horizontal: 30);
 
     if (_isLoading) {
       return const Scaffold(
@@ -76,7 +78,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               Container(
                 width: 400,
                 padding: AppConstants.padding,
-                margin: margin,
+                margin: AppConstants.margin,
                 decoration: AppConstants.boxDecoration,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -111,6 +113,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 ),
               ),
               NavigatorDashboard(),
+              GroupsDashboard(),
             ],
           ),
         )
@@ -146,14 +149,43 @@ class NavigatorDashboard extends StatelessWidget {
             text: "أعد ضبط المراتب"
           ),
           SizedBox(height: 10,),
-          ElevatedNavButton(text: "انشئ مجموعة", nextScreen: CreateGroupScreen()),
-          SizedBox(height: 10,),
           ElevatedNavButton(text: "لائحة البيانات", nextScreen: LeaderboardDashboardScreen()),
           SizedBox(height: 10,),
-          ElevatedNavButton(text: "ادارة برنامج المحاسبة", nextScreen: ChecklistItemManagerScreen(),)
+          ElevatedNavButton(text: "ادارة برنامج المحاسبة", nextScreen: ChecklistItemManagerScreen(),),
+          SizedBox(height: 10,),
+          ElevatedNavButton(text: "لوحة تحكم المستخدمين", nextScreen: UsersDashboard()),
+          SizedBox(height: 10,),
+          ElevatedNavButton(text: "إدارة المستخدمين", nextScreen: UsersManagementScreen(),)
         ],
       )
     );
+  }
+}
+
+class GroupsDashboard extends StatelessWidget {
+  const GroupsDashboard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 400,
+      padding: AppConstants.padding,
+      margin: EdgeInsets.fromLTRB(30,5,30,40),
+      decoration: AppConstants.boxDecoration,
+      child: Column(
+        children: [
+          Text(
+            "المجموعات التربوية",
+            style: AppConstants.titleTextStyle,
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 20,),
+          ElevatedNavButton(text: "انشئ مجموعة", nextScreen: CreateGroupScreen()),
+          SizedBox(height: 10,),
+          ElevatedNavButton(text: "ادارة المجموعات", nextScreen: GroupsScreen()),
+        ],
+      )
+    );  
   }
 }
 

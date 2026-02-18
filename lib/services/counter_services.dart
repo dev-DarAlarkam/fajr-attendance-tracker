@@ -16,4 +16,26 @@ class CounterServices {
     DocumentReference counterDoc = FirebaseFirestore.instance.collection('counter').doc(groupId);
     await counterDoc.set({date: FieldValue.increment(1)}, SetOptions(merge: true));
   }
+
+  Future<int> fetchGlobalCounter() async {
+    String date = DateFormatUtils.formatDate(DateTime.now());
+    DocumentReference counterDoc = FirebaseFirestore.instance.collection('counter').doc('global');
+    DocumentSnapshot snapshot = await counterDoc.get();
+    if(snapshot.exists) {
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      return data[date] ?? 0;
+    }
+    return 0;
+  }
+
+  Future<int> fetchGroupCounter(String groupId) async {
+    String date = DateFormatUtils.formatDate(DateTime.now());
+    DocumentReference counterDoc = FirebaseFirestore.instance.collection('counter').doc(groupId);
+    DocumentSnapshot snapshot = await counterDoc.get();
+    if(snapshot.exists) {
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      return data[date] ?? 0;
+    }
+    return 0;
+  }
 }

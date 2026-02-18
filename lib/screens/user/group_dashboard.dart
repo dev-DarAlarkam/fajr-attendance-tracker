@@ -26,7 +26,7 @@ class GroupDashboard extends StatelessWidget {
         return Container(
           width: 400,
           padding: AppConstants.padding,
-          margin: EdgeInsets.symmetric(vertical: 5, horizontal: 30),
+          margin: EdgeInsets.fromLTRB(30,5,30,15),
           decoration: AppConstants.boxDecoration,
           child: Column(
             mainAxisSize: MainAxisSize.max,
@@ -195,7 +195,8 @@ class GroupDashboard extends StatelessWidget {
                 // Validate the form
                 if (formKey.currentState!.validate()) {
                   try {
-                    await provider.joinGroup(controller.text).then((_) {
+                    final String groupId = controller.text.trim();
+                    await provider.joinGroup(groupId).then((_) {
                       controller.clear();
                     });
                   } catch (e) {

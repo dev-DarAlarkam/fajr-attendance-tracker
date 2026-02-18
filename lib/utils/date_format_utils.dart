@@ -15,6 +15,7 @@ class DateFormatUtils {
 
 
   static String formatHijriDate(DateTime date){
+    HijriCalendar.language = 'ar';
     final hDate = HijriCalendar.fromDate(date);
     late final  String hijriMonth;
 

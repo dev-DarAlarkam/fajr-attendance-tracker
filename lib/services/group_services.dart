@@ -17,6 +17,22 @@ class GroupServices{
     }
   }
 
+  // Update group name and grade level
+  Future<void> updateGroupNameAndGrade(
+    String groupId,
+    String groupName,
+    String gradeLevel,
+  ) async {
+    try {
+      await _firestore.collection('groups').doc(groupId).update({
+        'groupName': groupName,
+        'gradeLevel': gradeLevel,
+      });
+    } catch (e) {
+      throw Exception('Failed to update group: $e');
+    }
+  }
+
   // Fetch a group by its ID
   Future<Group> fetchGroup(String groupId) async {
     try {
@@ -46,6 +62,32 @@ class GroupServices{
       }
     } catch (e) {
       throw Exception('Failed to fetch group: $e');
+    }
+  }
+
+  Future<List<Group>> fetchAllGroups() async {
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('groups').get();
+      return snapshot.docs
+          .map((doc) => Group.fromFirestore(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to fetch groups: $e');
+    }
+  }
+
+  /// Fetches groups by a list of group IDs (e.g. for a teacher's assigned groups).
+  Future<List<Group>> fetchGroupsByIds(List<String> groupIds) async {
+    if (groupIds.isEmpty) return [];
+    try {
+      final List<Group> groups = [];
+      for (final id in groupIds) {
+        final group = await fetchGroup(id);
+        groups.add(group);
+      }
+      return groups;
+    } catch (e) {
+      throw Exception('Failed to fetch groups: $e');
     }
   }
 
@@ -160,7 +202,7 @@ class GroupServices{
       // Updating Teacher's group list
       DocumentReference userDoc = _firestore.collection('users').doc(teacherId);
       await userDoc.update({
-        'groupsId': FieldValue.arrayUnion([groupId]),
+        'groupIds': FieldValue.arrayUnion([groupId]),
       });
     } catch (e) {
       throw Exception('Failed to assign teacher to group: $e');
@@ -176,7 +218,7 @@ class GroupServices{
 
       DocumentReference userDoc = _firestore.collection('users').doc(teacherId);
       await userDoc.update({
-        'groupsId': FieldValue.arrayRemove([groupId]),
+        'groupIds': FieldValue.arrayRemove([groupId]),
       });
     } catch (e) {
       throw Exception('Failed to remove teacher from group: $e');

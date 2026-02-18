@@ -32,7 +32,7 @@ class _AttendanceDashboardState extends State<AttendanceDashboard> {
     return Container(
       width: 400,
       padding: AppConstants.padding,
-      margin: EdgeInsets.fromLTRB(30,5,30,40),
+      margin: EdgeInsets.fromLTRB(30,5,30,15),
       decoration: AppConstants.boxDecoration,
       child: Stack(
         children: [
@@ -77,7 +77,7 @@ class _AttendanceDashboardState extends State<AttendanceDashboard> {
               ],
             )
           ),
-
+          if(DateTime.now().isAfter(DateTime(2026, 2, 19)))
           FutureBuilder(
             future: PrayerTimesServices().checkIfFajrTime(), 
             builder: _buildAttendanceCover
