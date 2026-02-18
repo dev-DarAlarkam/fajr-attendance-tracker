@@ -139,12 +139,14 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                     item.prayerDoneType = value!;
                   });
               },
-              items: PrayerDoneType.values
-                  .map((e) => DropdownMenuItem(
-                        value: e,
-                        child: e.index == 4 ? Text('${Dictionary.prayerDoneTypes[e.index]} - ${Dictionary.excuseDoneType[item.index!]}') : Text(Dictionary.prayerDoneTypes[e.index]),
-                      ))
-                  .toList(),
+              items: 
+              [
+                DropdownMenuItem(value: PrayerDoneType.ontimeGroup, child: Text(Dictionary.prayerDoneTypes[0])),
+                DropdownMenuItem(value: PrayerDoneType.ontime, child: Text(Dictionary.prayerDoneTypes[1])),
+                DropdownMenuItem(value: PrayerDoneType.late, child: Text(Dictionary.prayerDoneTypes[2])),
+                DropdownMenuItem(value: PrayerDoneType.missed, child: Text(Dictionary.prayerDoneTypes[3])),
+                if (widget.userProfile.gender == "أنثى") DropdownMenuItem(value: PrayerDoneType.excused, child: Text('${Dictionary.prayerDoneTypes[4]} - ${Dictionary.excuseDoneType[item.index!]}')),
+              ]
             ),
           );
         },

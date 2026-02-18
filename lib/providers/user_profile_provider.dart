@@ -26,6 +26,9 @@ class UserProfileProvider with ChangeNotifier {
       final doc = await _firestore.collection('users').doc(userId).get();
       if (doc.exists) {
         _userProfile = UserProfile.fromFirestore(doc.data()!);
+        if (_userProfile?.rule == UserProfile.rules[1]) {
+          _userProfile = Teacher.fromFirestore(doc.data()!);
+        }
         return _userProfile;
       } else {
         return null;

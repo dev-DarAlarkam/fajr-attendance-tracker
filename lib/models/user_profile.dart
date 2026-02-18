@@ -54,6 +54,48 @@ class UserProfile {
   String get fullName => "$firstName $fatherName $lastName";
 
   static List<String> rules = ["user","teacher","admin"];
+}
 
+class Teacher extends UserProfile {
+  final List<String> groupIds;
 
+  Teacher({
+    required super.uid,
+    required super.firstName,
+    required super.fatherName,
+    required super.lastName,
+    required super.gender,
+    required super.birthday,
+    required super.grade,
+    required super.rule,
+    List<String> groupIds = const [],
+  })  : groupIds = groupIds,
+        super(groupId: 'None');
+
+  factory Teacher.fromFirestore(Map<String, dynamic> data) {
+    final groupIdsRaw = data['groupIds'];
+    final List<String> groupIds = groupIdsRaw is List
+        ? groupIdsRaw.map((e) => e?.toString() ?? '').toList()
+        : [];
+    return Teacher(
+      uid: data['uid'] ?? '',
+      firstName: data['firstName'] ?? '',
+      fatherName: data['fatherName'] ?? '',
+      lastName: data['lastName'] ?? '',
+      gender: data['gender'] ?? '',
+      birthday: data['birthday'] ?? '',
+      grade: data['grade'] ?? 'None',
+      rule: data['rule'] ?? 'teacher',
+      groupIds: groupIds,
+    );
+  }
+
+  @override
+  Map<String, dynamic> toFirestore() {
+    return {
+      ...super.toFirestore(),
+      'groupId': 'None',
+      'groupIds': groupIds,
+    };
+  }
 }

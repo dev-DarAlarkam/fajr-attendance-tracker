@@ -25,8 +25,8 @@ class AppConstants {
   ///Style Constants:
   
   //Colors
-  static const Color primaryColor = Color(0xFF0F9447);
-  static const Color secondaryColor = Color(0xFFF9BF18);
+  static const Color primaryColor = Color(0xFF11723A);
+  static const Color secondaryColor = Color(0xFF764E27);
   static const Color backgroundPrimaryColor = Color.fromRGBO(241, 242, 246, 1);
   static const Color backgroundSecondaryColor = Colors.white; 
   static const Color shadowColor = Color.fromRGBO(0, 0, 0, 0.1);

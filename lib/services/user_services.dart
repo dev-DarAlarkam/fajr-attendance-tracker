@@ -34,7 +34,7 @@ class UserProfileServices {
 
       if (rule == UserProfile.rules[1]) {
         await doc.update({
-          'groupsId': FieldValue.arrayUnion([]),
+          'groupIds': FieldValue.arrayUnion([]),
         });
       }
 

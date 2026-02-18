@@ -77,18 +77,12 @@ class _UsersTableBuilderState extends State<UsersTableBuilder> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
-            return buildTable(context, snapshot);
+            List<UserProfile> users = snapshot.data!;
+            return UsersTable(users: users);
           }
         }
       )
     );
-  }
-
-  Widget buildTable(BuildContext context, AsyncSnapshot<List<UserProfile>> snapshot) {
-
-    List<UserProfile> users = snapshot.data!;
-
-    return UsersTable(users: users);
   }
 }
 
@@ -220,6 +214,7 @@ class _UsersTableState extends State<UsersTable> {
                           icon: Icon(Icons.edit),
                           onPressed: () async {
                             _showEditUserDialog(context, user);
+                            setState(() {});
                           },
                         ),
                         IconButton(
@@ -447,8 +442,7 @@ Future<void> _showEditUserDialog(BuildContext context, UserProfile user) async {
                 await UserProfileServices().updateUserProfile(newUser).then((_) {
                   showSnackBar(context, "User Profile Updated Succefully!");
                   Navigator.of(context).pop();
-                });
-              
+                });              
               } catch (e) {
                 showSnackBar(context, "Error Updating User Profile: $e");
               }

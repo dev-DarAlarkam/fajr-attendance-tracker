@@ -43,7 +43,6 @@ class _SplashScreenState extends State<SplashScreen> {
       _navigateTo(routeName);
 
     } catch (e) {
-      print('Error: $e');
       _navigateTo('/login');
     }
   }
